@@ -22,6 +22,28 @@
   gap: var(--spacing-md);
 }
 
+.home-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-base);
+}
+
+.home-button:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.home-button:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
 .header-icon {
   color: var(--color-primary);
 }
@@ -30,6 +52,8 @@
   font-size: var(--font-size-lg);
   font-weight: 600;
   color: var(--color-text);
+  margin: 0;
+  text-align: left;
 }
 
 .header-right {

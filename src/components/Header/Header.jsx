@@ -23,12 +23,18 @@ const Header = () => {
     navigate('/employee-list');
   };
 
+  const handleHomeDashboard = () => {
+    navigate('/dashboard');
+  };
+
   return (
     <header className="header">
       <div className="header-content">
         <div className="header-left">
-          <Home size={24} className="header-icon" />
-          <h1 className="header-title">{companyName}</h1> {/* UPDATED: Dynamic company name */}
+          <button onClick={handleHomeDashboard} className="home-button">
+            <Home size={24} className="header-icon" />
+            <h1 className="header-title">{companyName}</h1> {/* UPDATED: Dynamic company name */}
+          </button>
         </div>
         
         <div className="header-right">
