@@ -1,0 +1,58 @@
+:root {
+  /* Colors - Default Dark Theme */
+  --color-primary: #D27AD5;
+  --color-secondary: #C841CC;
+  --color-disabled: #C0C0C0;
+  --color-background: #0A0A0A;
+  --color-card-bg: #1A1A1A;
+  --color-text: #FFFFFF;
+  --color-text-secondary: #A0A0A0;
+  --color-border: #2A2A2A;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  
+  /* Typography */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  --color-background: #FFFFFF;
+  --color-card-bg: #F8F9FA;
+  --color-text: #1A1A1A;
+  --color-text-secondary: #6B7280;
+  --color-border: #E5E7EB;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --color-background: #0A0A0A;
+  --color-card-bg: #1A1A1A;
+  --color-text: #FFFFFF;
+  --color-text-secondary: #A0A0A0;
+  --color-border: #2A2A2A;
+}
