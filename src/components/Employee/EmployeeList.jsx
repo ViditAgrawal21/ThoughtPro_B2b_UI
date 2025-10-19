@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Users, Search, Edit2, Trash2, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
@@ -7,8 +7,20 @@ import './EmployeeList.css';
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDepartment, setSelectedDepartment] = useState('');
   const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [availableDepartments, setAvailableDepartments] = useState([]);
   const navigate = useNavigate();
+
+  // Get unique departments from employees
+  const getUniqueDepartments = useCallback((employeeList) => {
+    const departments = employeeList
+      .map(emp => emp.department)
+      .filter(dept => dept && dept.trim() !== '')
+      .filter((dept, index, arr) => arr.indexOf(dept) === index)
+      .sort();
+    return departments;
+  }, []);
 
   useEffect(() => {
     // Load employees from localStorage
@@ -17,20 +29,31 @@ const EmployeeList = () => {
       const employeeData = JSON.parse(savedEmployees);
       setEmployees(employeeData);
       setFilteredEmployees(employeeData);
+      setAvailableDepartments(getUniqueDepartments(employeeData));
     }
-  }, []);
+  }, [getUniqueDepartments]);
 
   useEffect(() => {
-    // Filter employees based on search term
+    // Filter employees based on search term and department
+    let filtered = employees;
+
+    // Filter by search term (name or email)
     if (searchTerm) {
-      const filtered = employees.filter(employee =>
-        employee.name.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(employee =>
+        employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (employee.email && employee.email.toLowerCase().includes(searchTerm.toLowerCase()))
       );
-      setFilteredEmployees(filtered);
-    } else {
-      setFilteredEmployees(employees);
     }
-  }, [searchTerm, employees]);
+
+    // Filter by department
+    if (selectedDepartment) {
+      filtered = filtered.filter(employee =>
+        employee.department === selectedDepartment
+      );
+    }
+
+    setFilteredEmployees(filtered);
+  }, [searchTerm, selectedDepartment, employees]);
 
   const handleEdit = (employeeId) => {
     navigate(`/add-employee?id=${employeeId}`);
@@ -40,6 +63,7 @@ const EmployeeList = () => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
       const updatedEmployees = employees.filter(emp => emp.id !== employeeId);
       setEmployees(updatedEmployees);
+      setAvailableDepartments(getUniqueDepartments(updatedEmployees));
       localStorage.setItem('employees', JSON.stringify(updatedEmployees));
     }
   };
@@ -73,11 +97,26 @@ const EmployeeList = () => {
             <Search size={20} className="search-icon" />
             <input
               type="text"
-              placeholder="Search employees..."
+              placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
             />
+          </div>
+
+          <div className="filter-container">
+            <select
+              value={selectedDepartment}
+              onChange={(e) => setSelectedDepartment(e.target.value)}
+              className="department-filter"
+            >
+              <option value="">All Departments</option>
+              {availableDepartments.map(department => (
+                <option key={department} value={department}>
+                  {department}
+                </option>
+              ))}
+            </select>
           </div>
           
           <div className="employee-count">
@@ -112,7 +151,10 @@ const EmployeeList = () => {
                   </div>
                   <div className="employee-details">
                     <h3 className="employee-name">{employee.name}</h3>
-                    <p className="employee-age">Age: {employee.age}</p>
+                    <p className="employee-email">{employee.email || 'No email provided'}</p>
+                    {employee.department && (
+                      <span className="employee-department">{employee.department}</span>
+                    )}
                     <p className="employee-id">ID: {employee.id}</p>
                   </div>
                 </div>

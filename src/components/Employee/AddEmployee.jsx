@@ -6,7 +6,8 @@ import './AddEmployee.css';
 
 const AddEmployee = () => {
   const [employeeName, setEmployeeName] = useState('');
-  const [age, setAge] = useState('');
+  const [email, setEmail] = useState('');
+  const [department, setDepartment] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -24,7 +25,8 @@ const AddEmployee = () => {
       const employee = employees.find(emp => emp.id === employeeId);
       if (employee) {
         setEmployeeName(employee.name);
-        setAge(employee.age.toString());
+        setEmail(employee.email || '');
+        setDepartment(employee.department || '');
         setIsEditing(true);
         setEditingId(employeeId);
       }
@@ -42,8 +44,20 @@ const AddEmployee = () => {
       return;
     }
 
-    if (!age || age < 1 || age > 100) {
-      setError('Please enter a valid age between 1 and 100');
+    if (!email.trim()) {
+      setError('Please enter employee email');
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    if (!department.trim()) {
+      setError('Please select a department');
       return;
     }
 
@@ -59,7 +73,7 @@ const AddEmployee = () => {
         // Update existing employee
         const updatedEmployees = employees.map(emp => 
           emp.id === editingId 
-            ? { ...emp, name: employeeName.trim(), age: parseInt(age) }
+            ? { ...emp, name: employeeName.trim(), email: email.trim(), department: department.trim() }
             : emp
         );
         localStorage.setItem('employees', JSON.stringify(updatedEmployees));
@@ -68,7 +82,8 @@ const AddEmployee = () => {
         const employeeData = {
           id: Math.random().toString(36).substr(2, 9),
           name: employeeName.trim(),
-          age: parseInt(age),
+          email: email.trim(),
+          department: department.trim(),
           createdAt: new Date().toISOString()
         };
         employees.push(employeeData);
@@ -80,7 +95,8 @@ const AddEmployee = () => {
       // Reset form if creating new
       if (!isEditing) {
         setEmployeeName('');
-        setAge('');
+        setEmail('');
+        setDepartment('');
       }
       
       // Redirect after success
@@ -139,19 +155,38 @@ const AddEmployee = () => {
               />
             </div>
 
-            {/* Age Input */}
+            {/* Email Input */}
             <div className="input-group">
-              <label className="label">Age</label>
+              <label className="label">Email</label>
               <input
-                type="number"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                placeholder="Enter age"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter email address"
                 className="input"
                 disabled={loading}
-                min="1"
-                max="100"
               />
+            </div>
+
+            {/* Department Input */}
+            <div className="input-group">
+              <label className="label">Department</label>
+              <select
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                className="input"
+                disabled={loading}
+              >
+                <option value="">Select Department</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Sales">Sales</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Finance">Finance</option>
+                <option value="Operations">Operations</option>
+                <option value="Customer Support">Customer Support</option>
+                <option value="Product Management">Product Management</option>
+              </select>
             </div>
 
             {/* Error Message */}

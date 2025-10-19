@@ -104,6 +104,28 @@
   color: var(--color-text-secondary);
 }
 
+.filter-container {
+  display: flex;
+  align-items: center;
+}
+
+.department-filter {
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color var(--transition-base);
+  min-width: 180px;
+}
+
+.department-filter:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
 .employee-count {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
@@ -154,20 +176,41 @@
 
 .employee-details {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .employee-name {
   font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: 0;
 }
 
-.employee-age,
+.employee-email,
 .employee-id {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  margin-bottom: 2px;
+  margin: 0;
+}
+
+.employee-email {
+  font-style: italic;
+  word-break: break-all;
+}
+
+.employee-department {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+  margin: 0;
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
 }
 
 .employee-actions {
@@ -275,6 +318,14 @@
 
   .search-container {
     max-width: none;
+  }
+
+  .filter-container {
+    margin-top: var(--spacing-sm);
+  }
+
+  .department-filter {
+    width: 100%;
   }
 
   .employee-count {
