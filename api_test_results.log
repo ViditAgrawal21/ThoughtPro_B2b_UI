@@ -1,0 +1,420 @@
+2025-10-20 22:18:21,159 - INFO - ================================================================================
+2025-10-20 22:18:21,160 - INFO - ==================================================
+2025-10-20 22:18:21,161 - INFO - Testing POST /auth/supabase/register-profile - Register User Profile
+2025-10-20 22:18:21,606 - INFO - Testing POST /auth/supabase/create-credentials - Create User Credentials
+2025-10-20 22:18:21,635 - INFO - Testing POST /auth/supabase/login - User Login
+2025-10-20 22:18:21,708 - INFO - Testing GET /auth/supabase/profile - Get User Profile
+2025-10-20 22:18:21,709 - INFO - Testing POST /auth/supabase/create-employee-temp - Create Employee with Temporary Password
+2025-10-20 22:18:21,709 - INFO - Testing POST /auth/supabase/login-temp - Login with Temporary Password
+2025-10-20 22:18:21,808 - INFO - Testing PUT /auth/supabase/update-temp-password - Update Temporary Password
+2025-10-20 22:18:21,810 - INFO - ==================================================
+2025-10-20 22:18:21,811 - INFO - Testing POST /api/v1/companies-supabase - Create Company with Supabase
+2025-10-20 22:18:21,911 - INFO - Testing POST /companies/test-company-123/employees - Create Employee with Email
+2025-10-20 22:18:21,912 - INFO - Testing GET /companies/test-company-123/employees - Get Company Employees
+2025-10-20 22:18:21,912 - INFO - Testing POST /companies/test-company-123/employees/test-employee-123/resend-credentials - Resend Employee Credentials
+2025-10-20 22:18:21,913 - INFO - Testing POST /companies/test-company-123/employees/bulk - Bulk Create Employees
+2025-10-20 22:18:21,913 - INFO - Testing POST /companies/forgot-password/personal-email - Send Password Reset Link
+2025-10-20 22:18:21,962 - INFO - Testing GET /api/v1/companies-supabase/test-company-123/subscription-config - Get Company Subscription Config
+2025-10-20 22:18:21,962 - INFO - Testing PUT /api/v1/companies-supabase/test-company-123/subscription-config - Update Company Subscription Config
+2025-10-20 22:18:21,967 - INFO - ==================================================
+2025-10-20 22:18:21,967 - INFO - Testing GET /psychologists - Get All Psychologists
+2025-10-20 22:18:22,010 - INFO - Testing POST /psychologists - Create Psychologist Profile
+2025-10-20 22:18:22,010 - INFO - Testing GET /psychologists/search - Search Psychologists by Name
+2025-10-20 22:18:22,037 - INFO - Testing GET /psychologists/test-psychologist-123 - Get Psychologist by ID
+2025-10-20 22:18:22,065 - INFO - ==================================================
+2025-10-20 22:18:22,065 - INFO - Testing GET /bookings/my-bookings - Get My Bookings
+2025-10-20 22:18:22,065 - INFO - Testing GET /bookings/psychologist-bookings - Get Psychologist's Bookings
+2025-10-20 22:18:22,065 - INFO - Testing POST /bookings - Create New Booking
+2025-10-20 22:18:22,066 - INFO - ==================================================
+2025-10-20 22:18:22,066 - INFO - Testing POST /employee-subscriptions/verify/purchase - Verify Google Play Purchase
+2025-10-20 22:18:22,114 - INFO - Testing POST /employee-subscriptions/verify/subscription - Verify Google Play Subscription
+2025-10-20 22:18:22,139 - INFO - Testing GET /employee-subscriptions/active - Get Active Subscriptions
+2025-10-20 22:18:22,164 - INFO - Testing GET /employee-subscriptions/status - Check Subscription Status
+2025-10-20 22:18:22,201 - INFO - ==================================================
+2025-10-20 22:18:22,201 - INFO - Testing POST /api/v1/availability - Create Availability Slot
+2025-10-20 22:18:22,201 - INFO - Testing GET /api/v1/availability/test-psychologist-123 - Get Availability by Psychologist ID
+2025-10-20 22:18:22,201 - INFO - Testing PATCH /api/v1/availability/test-availability-123 - Update Availability Status
+2025-10-20 22:18:22,202 - INFO - Testing DELETE /api/v1/availability/test-availability-123 - Delete Availability Slot
+2025-10-20 22:18:22,202 - INFO - Testing POST /api/v1/availability/populate-n-days - Populate N Days Availability
+2025-10-20 22:18:22,202 - INFO - Testing PATCH /api/v1/availability/toggle-day - Toggle Day Availability
+2025-10-20 22:18:22,202 - INFO - Testing GET /api/v1/holidays - Get All Holidays
+2025-10-20 22:18:22,202 - INFO - Testing POST /api/v1/holidays - Add Holiday
+2025-10-20 22:18:22,202 - INFO - Testing DELETE /api/v1/holidays/test-holiday-123 - Delete Holiday
+2025-10-20 22:18:22,203 - INFO - ==================================================
+2025-10-20 22:18:22,203 - INFO - Testing GET /employee-subscriptions/status - Check Employee Subscription Service Status
+2025-10-20 22:18:22,245 - INFO - ==================================================
+2025-10-20 22:18:22,245 - INFO - Testing GET /auth/supabase/company/test-company-123/employees-status - Get Employees with Credential Status
+2025-10-20 22:18:22,246 - INFO - ==================================================
+2025-10-20 22:18:38,786 - INFO - ==================================================
+2025-10-20 22:22:28,962 - INFO - STARTING THOUGHTPRO B2B API & UI INTEGRATION TESTS
+2025-10-20 22:22:28,963 - INFO - ================================================================================
+2025-10-20 22:22:28,963 - INFO - 
+TESTING AUTHENTICATION ENDPOINTS
+2025-10-20 22:22:28,963 - INFO - ==================================================
+2025-10-20 22:22:28,963 - INFO - Testing POST /auth/supabase/register-profile - Register User Profile
+2025-10-20 22:22:29,253 - INFO - [FAIL] - HTTP 500 - Not Found - /auth/supabase/register-profile (0.289s)
+2025-10-20 22:22:29,253 - INFO - Testing POST /auth/supabase/create-credentials - Create User Credentials
+2025-10-20 22:22:29,304 - INFO - [FAIL] - HTTP 500 - Not Found - /auth/supabase/create-credentials (0.051s)
+2025-10-20 22:22:29,304 - INFO - Testing POST /auth/supabase/login - User Login
+2025-10-20 22:22:29,354 - INFO - [FAIL] - HTTP 500 - Not Found - /auth/supabase/login (0.051s)
+2025-10-20 22:22:29,355 - INFO - Testing GET /auth/supabase/profile - Get User Profile
+2025-10-20 22:22:29,355 - INFO - Testing POST /auth/supabase/create-employee-temp - Create Employee with Temporary Password
+2025-10-20 22:22:29,356 - INFO - Testing POST /auth/supabase/login-temp - Login with Temporary Password
+2025-10-20 22:22:29,407 - INFO - [FAIL] - HTTP 500 - Not Found - /auth/supabase/login-temp (0.052s)
+2025-10-20 22:22:29,407 - INFO - Testing PUT /auth/supabase/update-temp-password - Update Temporary Password
+2025-10-20 22:22:29,407 - INFO - 
+TESTING COMPANY ENDPOINTS
+2025-10-20 22:22:29,408 - INFO - ==================================================
+2025-10-20 22:22:29,408 - INFO - Testing POST /api/v1/companies-supabase - Create Company with Supabase
+2025-10-20 22:22:29,510 - INFO - [FAIL] - HTTP 500 - Not Found - /api/v1/companies-supabase (0.102s)
+2025-10-20 22:22:29,511 - INFO - Testing POST /companies/test-company-123/employees - Create Employee with Email
+2025-10-20 22:22:29,511 - INFO - Testing GET /companies/test-company-123/employees - Get Company Employees
+2025-10-20 22:22:29,511 - INFO - Testing POST /companies/test-company-123/employees/test-employee-123/resend-credentials - Resend Employee Credentials
+2025-10-20 22:22:29,511 - INFO - Testing POST /companies/test-company-123/employees/bulk - Bulk Create Employees
+2025-10-20 22:22:29,512 - INFO - Testing POST /companies/forgot-password/personal-email - Send Password Reset Link
+2025-10-20 22:22:29,544 - INFO - [FAIL] - HTTP 500 - Not Found - /companies/forgot-password/personal-email (0.032s)
+2025-10-20 22:22:29,545 - INFO - Testing GET /api/v1/companies-supabase/test-company-123/subscription-config - Get Company Subscription Config
+2025-10-20 22:22:29,545 - INFO - Testing PUT /api/v1/companies-supabase/test-company-123/subscription-config - Update Company Subscription Config
+2025-10-20 22:22:29,545 - INFO - 
+TESTING PSYCHOLOGIST ENDPOINTS
+2025-10-20 22:22:29,545 - INFO - ==================================================
+2025-10-20 22:22:29,546 - INFO - Testing GET /psychologists - Get All Psychologists
+2025-10-20 22:22:29,622 - INFO - [FAIL] - HTTP 500 - Not Found - /psychologists (0.077s)
+2025-10-20 22:22:29,623 - INFO - Testing POST /psychologists - Create Psychologist Profile
+2025-10-20 22:22:29,623 - INFO - Testing GET /psychologists/search - Search Psychologists by Name
+2025-10-20 22:22:29,671 - INFO - [FAIL] - HTTP 500 - Not Found - /psychologists/search?name=Test (0.047s)
+2025-10-20 22:22:29,671 - INFO - Testing GET /psychologists/test-psychologist-123 - Get Psychologist by ID
+2025-10-20 22:22:29,714 - INFO - [FAIL] - HTTP 500 - Not Found - /psychologists/test-psychologist-123 (0.042s)
+2025-10-20 22:22:29,714 - INFO - 
+TESTING BOOKING ENDPOINTS
+2025-10-20 22:22:29,714 - INFO - ==================================================
+2025-10-20 22:22:29,714 - INFO - Testing GET /bookings/my-bookings - Get My Bookings
+2025-10-20 22:22:29,714 - INFO - Testing GET /bookings/psychologist-bookings - Get Psychologist's Bookings
+2025-10-20 22:22:29,714 - INFO - Testing POST /bookings - Create New Booking
+2025-10-20 22:22:29,714 - INFO - 
+TESTING EMPLOYEE SUBSCRIPTION ENDPOINTS
+2025-10-20 22:22:29,714 - INFO - ==================================================
+2025-10-20 22:22:29,714 - INFO - Testing POST /employee-subscriptions/verify/purchase - Verify Google Play Purchase
+2025-10-20 22:22:29,738 - INFO - [FAIL] - HTTP 500 - Not Found - /employee-subscriptions/verify/purchase (0.023s)
+2025-10-20 22:22:29,738 - INFO - Testing POST /employee-subscriptions/verify/subscription - Verify Google Play Subscription
+2025-10-20 22:22:29,764 - INFO - [FAIL] - HTTP 500 - Not Found - /employee-subscriptions/verify/subscription (0.026s)
+2025-10-20 22:22:29,764 - INFO - Testing GET /employee-subscriptions/active - Get Active Subscriptions
+2025-10-20 22:22:29,792 - INFO - [FAIL] - HTTP 500 - Not Found - /employee-subscriptions/active (0.026s)
+2025-10-20 22:22:29,792 - INFO - Testing GET /employee-subscriptions/status - Check Subscription Status
+2025-10-20 22:22:29,815 - INFO - [FAIL] - HTTP 500 - Not Found - /employee-subscriptions/status (0.023s)
+2025-10-20 22:22:29,815 - INFO - 
+TESTING AVAILABILITY ENDPOINTS
+2025-10-20 22:22:29,816 - INFO - ==================================================
+2025-10-20 22:22:29,816 - INFO - Testing POST /api/v1/availability - Create Availability Slot
+2025-10-20 22:22:29,816 - INFO - Testing GET /api/v1/availability/test-psychologist-123 - Get Availability by Psychologist ID
+2025-10-20 22:22:29,816 - INFO - Testing PATCH /api/v1/availability/test-availability-123 - Update Availability Status
+2025-10-20 22:22:29,816 - INFO - Testing DELETE /api/v1/availability/test-availability-123 - Delete Availability Slot
+2025-10-20 22:22:29,816 - INFO - Testing POST /api/v1/availability/populate-n-days - Populate N Days Availability
+2025-10-20 22:22:29,816 - INFO - Testing PATCH /api/v1/availability/toggle-day - Toggle Day Availability
+2025-10-20 22:22:29,816 - INFO - Testing GET /api/v1/holidays - Get All Holidays
+2025-10-20 22:22:29,816 - INFO - Testing POST /api/v1/holidays - Add Holiday
+2025-10-20 22:22:29,817 - INFO - Testing DELETE /api/v1/holidays/test-holiday-123 - Delete Holiday
+2025-10-20 22:22:29,818 - INFO - 
+TESTING HEALTH CHECK ENDPOINTS
+2025-10-20 22:22:29,818 - INFO - ==================================================
+2025-10-20 22:22:29,818 - INFO - Testing GET /employee-subscriptions/status - Check Employee Subscription Service Status
+2025-10-20 22:22:29,866 - INFO - [FAIL] - HTTP 500 - Not Found - /employee-subscriptions/status (0.048s)
+2025-10-20 22:22:29,867 - INFO - 
+TESTING EMPLOYEE MANAGEMENT ENDPOINTS
+2025-10-20 22:22:29,867 - INFO - ==================================================
+2025-10-20 22:22:29,867 - INFO - Testing GET /auth/supabase/company/test-company-123/employees-status - Get Employees with Credential Status
+2025-10-20 22:22:29,867 - INFO - 
+TESTING UI CONNECTIVITY
+2025-10-20 22:22:29,867 - INFO - ==================================================
+2025-10-20 22:22:31,945 - INFO - [PASS] - Main Landing Page - UI page accessible (2.078s)
+2025-10-20 22:22:34,001 - INFO - [PASS] - Login Page - UI page accessible (2.056s)
+2025-10-20 22:22:36,049 - INFO - [PASS] - Dashboard - UI page accessible (2.048s)
+2025-10-20 22:22:38,110 - INFO - [PASS] - Employee Management - UI page accessible (2.059s)
+2025-10-20 22:22:40,160 - INFO - [PASS] - Psychologist Management - UI page accessible (2.050s)
+2025-10-20 22:22:42,244 - INFO - [PASS] - Booking Management - UI page accessible (2.083s)
+2025-10-20 22:22:44,302 - INFO - [PASS] - Company Management - UI page accessible (2.057s)
+2025-10-20 22:22:46,365 - INFO - [PASS] - Settings Page - UI page accessible (2.061s)
+2025-10-20 22:22:46,365 - INFO - 
+GENERATING TEST REPORT
+2025-10-20 22:22:46,366 - INFO - ==================================================
+2025-10-20 22:22:46,367 - INFO - Test report saved to: api_ui_test_report.txt
+2025-10-20 22:22:46,367 - INFO - Test logs saved to: api_test_results.log
+2025-10-20 22:31:14,841 - INFO - STARTING THOUGHTPRO B2B API & UI INTEGRATION TESTS
+2025-10-20 22:31:14,841 - INFO - ================================================================================
+2025-10-20 22:31:14,841 - INFO - 
+TESTING AUTHENTICATION ENDPOINTS
+2025-10-20 22:31:14,842 - INFO - ==================================================
+2025-10-20 22:31:14,842 - INFO - Testing POST /auth/supabase/register-profile - Register User Profile
+2025-10-20 22:31:17,067 - INFO - [PASS] - Success - User profile created successfully (2.225s)
+2025-10-20 22:31:17,067 - INFO - Testing POST /auth/supabase/create-credentials - Create User Credentials
+2025-10-20 22:31:17,099 - INFO - [FAIL] - HTTP 400 - Request failed (0.030s)
+2025-10-20 22:31:17,100 - INFO - Testing POST /auth/supabase/login - User Login
+2025-10-20 22:31:17,483 - INFO - [FAIL] - HTTP 401 - Request failed (0.384s)
+2025-10-20 22:31:17,483 - INFO - Testing GET /auth/supabase/profile - Get User Profile
+2025-10-20 22:31:17,484 - INFO - Testing POST /auth/supabase/create-employee-temp - Create Employee with Temporary Password
+2025-10-20 22:31:17,484 - INFO - Testing POST /auth/supabase/login-temp - Login with Temporary Password
+2025-10-20 22:31:17,530 - INFO - [FAIL] - HTTP 400 - Request failed (0.046s)
+2025-10-20 22:31:17,531 - INFO - Testing PUT /auth/supabase/update-temp-password - Update Temporary Password
+2025-10-20 22:31:17,531 - INFO - 
+TESTING COMPANY ENDPOINTS
+2025-10-20 22:31:17,531 - INFO - ==================================================
+2025-10-20 22:31:17,531 - INFO - Testing POST /api/v1/companies-supabase - Create Company with Supabase
+2025-10-20 22:31:17,581 - INFO - [FAIL] - HTTP 500 - Not Found - /api/v1/api/v1/companies-supabase (0.050s)
+2025-10-20 22:31:17,582 - INFO - Testing POST /companies/test-company-123/employees - Create Employee with Email
+2025-10-20 22:31:17,582 - INFO - Testing GET /companies/test-company-123/employees - Get Company Employees
+2025-10-20 22:31:17,582 - INFO - Testing POST /companies/test-company-123/employees/test-employee-123/resend-credentials - Resend Employee Credentials
+2025-10-20 22:31:17,582 - INFO - Testing POST /companies/test-company-123/employees/bulk - Bulk Create Employees
+2025-10-20 22:31:17,583 - INFO - Testing POST /companies/forgot-password/personal-email - Send Password Reset Link
+2025-10-20 22:31:17,606 - INFO - [FAIL] - HTTP 400 - Request failed (0.023s)
+2025-10-20 22:31:17,606 - INFO - Testing GET /api/v1/companies-supabase/test-company-123/subscription-config - Get Company Subscription Config
+2025-10-20 22:31:17,607 - INFO - Testing PUT /api/v1/companies-supabase/test-company-123/subscription-config - Update Company Subscription Config
+2025-10-20 22:31:17,607 - INFO - 
+TESTING PSYCHOLOGIST ENDPOINTS
+2025-10-20 22:31:17,607 - INFO - ==================================================
+2025-10-20 22:31:17,607 - INFO - Testing GET /psychologists - Get All Psychologists
+2025-10-20 22:31:17,634 - INFO - [FAIL] - HTTP 500 - Cannot read properties of undefined (reading 'psychologistService') (0.027s)
+2025-10-20 22:31:17,635 - INFO - Testing POST /psychologists - Create Psychologist Profile
+2025-10-20 22:31:17,635 - INFO - Testing GET /psychologists/search - Search Psychologists by Name
+2025-10-20 22:31:17,684 - INFO - [FAIL] - HTTP 500 - Cannot read properties of undefined (reading 'psychologistService') (0.048s)
+2025-10-20 22:31:17,684 - INFO - Testing GET /psychologists/test-psychologist-123 - Get Psychologist by ID
+2025-10-20 22:31:17,707 - INFO - [FAIL] - HTTP 400 - Request failed (0.023s)
+2025-10-20 22:31:17,707 - INFO - 
+TESTING BOOKING ENDPOINTS
+2025-10-20 22:31:17,709 - INFO - ==================================================
+2025-10-20 22:31:17,724 - INFO - Testing GET /bookings/my-bookings - Get My Bookings
+2025-10-20 22:31:17,731 - INFO - Testing GET /bookings/psychologist-bookings - Get Psychologist's Bookings
+2025-10-20 22:31:17,731 - INFO - Testing POST /bookings - Create New Booking
+2025-10-20 22:31:17,732 - INFO - 
+TESTING EMPLOYEE SUBSCRIPTION ENDPOINTS
+2025-10-20 22:31:17,732 - INFO - ==================================================
+2025-10-20 22:31:17,732 - INFO - Testing POST /employee-subscriptions/verify/purchase - Verify Google Play Purchase
+2025-10-20 22:31:17,791 - INFO - [FAIL] - HTTP 400 - Validation failed (0.059s)
+2025-10-20 22:31:17,792 - INFO - Testing POST /employee-subscriptions/verify/subscription - Verify Google Play Subscription
+2025-10-20 22:31:17,844 - INFO - [FAIL] - HTTP 400 - Validation failed (0.052s)
+2025-10-20 22:31:17,844 - INFO - Testing GET /employee-subscriptions/active - Get Active Subscriptions
+2025-10-20 22:31:17,865 - INFO - [FAIL] - HTTP 400 - Validation failed (0.020s)
+2025-10-20 22:31:17,865 - INFO - Testing GET /employee-subscriptions/status - Check Subscription Status
+2025-10-20 22:31:17,893 - INFO - [PASS] - Success - Employee Subscription Service Status (0.027s)
+2025-10-20 22:31:17,894 - INFO - 
+TESTING AVAILABILITY ENDPOINTS
+2025-10-20 22:31:17,894 - INFO - ==================================================
+2025-10-20 22:31:17,894 - INFO - Testing POST /api/v1/availability - Create Availability Slot
+2025-10-20 22:31:17,894 - INFO - Testing GET /api/v1/availability/test-psychologist-123 - Get Availability by Psychologist ID
+2025-10-20 22:31:17,894 - INFO - Testing PATCH /api/v1/availability/test-availability-123 - Update Availability Status
+2025-10-20 22:31:17,895 - INFO - Testing DELETE /api/v1/availability/test-availability-123 - Delete Availability Slot
+2025-10-20 22:31:17,895 - INFO - Testing POST /api/v1/availability/populate-n-days - Populate N Days Availability
+2025-10-20 22:31:17,895 - INFO - Testing PATCH /api/v1/availability/toggle-day - Toggle Day Availability
+2025-10-20 22:31:17,895 - INFO - Testing GET /api/v1/holidays - Get All Holidays
+2025-10-20 22:31:17,895 - INFO - Testing POST /api/v1/holidays - Add Holiday
+2025-10-20 22:31:17,895 - INFO - Testing DELETE /api/v1/holidays/test-holiday-123 - Delete Holiday
+2025-10-20 22:31:17,895 - INFO - 
+TESTING HEALTH CHECK ENDPOINTS
+2025-10-20 22:31:17,896 - INFO - ==================================================
+2025-10-20 22:31:17,896 - INFO - Testing GET /employee-subscriptions/status - Check Employee Subscription Service Status
+2025-10-20 22:31:17,918 - INFO - [PASS] - Success - Employee Subscription Service Status (0.022s)
+2025-10-20 22:31:17,918 - INFO - 
+TESTING EMPLOYEE MANAGEMENT ENDPOINTS
+2025-10-20 22:31:17,918 - INFO - ==================================================
+2025-10-20 22:31:17,918 - INFO - Testing GET /auth/supabase/company/test-company-123/employees-status - Get Employees with Credential Status
+2025-10-20 22:31:17,918 - INFO - 
+TESTING UI CONNECTIVITY
+2025-10-20 22:31:17,918 - INFO - ==================================================
+2025-10-20 22:31:19,982 - INFO - [PASS] - Main Landing Page - UI page accessible (2.064s)
+2025-10-20 22:31:22,032 - INFO - [PASS] - Login Page - UI page accessible (2.050s)
+2025-10-20 22:31:24,067 - INFO - [PASS] - Dashboard - UI page accessible (2.035s)
+2025-10-20 22:31:26,137 - INFO - [PASS] - Employee Management - UI page accessible (2.068s)
+2025-10-20 22:31:28,194 - INFO - [PASS] - Psychologist Management - UI page accessible (2.057s)
+2025-10-20 22:31:30,241 - INFO - [PASS] - Booking Management - UI page accessible (2.045s)
+2025-10-20 22:31:32,291 - INFO - [PASS] - Company Management - UI page accessible (2.050s)
+2025-10-20 22:31:34,343 - INFO - [PASS] - Settings Page - UI page accessible (2.052s)
+2025-10-20 22:31:34,343 - INFO - 
+GENERATING TEST REPORT
+2025-10-20 22:31:34,343 - INFO - ==================================================
+2025-10-20 22:31:34,346 - INFO - Test report saved to: api_ui_test_report.txt
+2025-10-20 22:31:34,346 - INFO - Test logs saved to: api_test_results.log
+2025-10-20 22:35:14,722 - INFO - STARTING THOUGHTPRO B2B API & UI INTEGRATION TESTS
+2025-10-20 22:35:14,722 - INFO - ================================================================================
+2025-10-20 22:35:14,722 - INFO - 
+TESTING AUTHENTICATION ENDPOINTS
+2025-10-20 22:35:14,722 - INFO - ==================================================
+2025-10-20 22:35:14,722 - INFO - Testing POST /auth/supabase/register-profile - Register User Profile
+2025-10-20 22:35:16,941 - INFO - [PASS] - Success - User profile created successfully (2.220s)
+2025-10-20 22:35:16,942 - INFO - Testing POST /auth/supabase/create-credentials - Create User Credentials
+2025-10-20 22:35:16,969 - INFO - [FAIL] - HTTP 400 - Request failed (0.027s)
+2025-10-20 22:35:16,969 - INFO - Testing POST /auth/supabase/login - User Login
+2025-10-20 22:35:17,410 - INFO - [FAIL] - HTTP 401 - Request failed (0.441s)
+2025-10-20 22:35:17,410 - INFO - Testing GET /auth/supabase/profile - Get User Profile
+2025-10-20 22:35:17,410 - INFO - Testing POST /auth/supabase/create-employee-temp - Create Employee with Temporary Password
+2025-10-20 22:35:17,411 - INFO - Testing POST /auth/supabase/login-temp - Login with Temporary Password
+2025-10-20 22:35:17,452 - INFO - [FAIL] - HTTP 400 - Request failed (0.041s)
+2025-10-20 22:35:17,453 - INFO - Testing PUT /auth/supabase/update-temp-password - Update Temporary Password
+2025-10-20 22:35:17,453 - INFO - 
+TESTING COMPANY ENDPOINTS
+2025-10-20 22:35:17,453 - INFO - ==================================================
+2025-10-20 22:35:17,453 - INFO - Testing POST /companies-supabase - Create Company with Supabase
+2025-10-20 22:35:17,504 - INFO - [FAIL] - HTTP 500 - Not Found - /api/v1/companies-supabase (0.051s)
+2025-10-20 22:35:17,504 - INFO - Testing POST /companies/test-company-123/employees - Create Employee with Email
+2025-10-20 22:35:17,504 - INFO - Testing GET /companies/test-company-123/employees - Get Company Employees
+2025-10-20 22:35:17,504 - INFO - Testing POST /companies/test-company-123/employees/test-employee-123/resend-credentials - Resend Employee Credentials
+2025-10-20 22:35:17,504 - INFO - Testing POST /companies/test-company-123/employees/bulk - Bulk Create Employees
+2025-10-20 22:35:17,504 - INFO - Testing POST /companies/forgot-password/personal-email - Send Password Reset Link
+2025-10-20 22:35:17,554 - INFO - [FAIL] - HTTP 400 - Request failed (0.049s)
+2025-10-20 22:35:17,555 - INFO - Testing GET /companies-supabase/test-company-123/subscription-config - Get Company Subscription Config
+2025-10-20 22:35:17,555 - INFO - Testing PUT /companies-supabase/test-company-123/subscription-config - Update Company Subscription Config
+2025-10-20 22:35:17,555 - INFO - 
+TESTING PSYCHOLOGIST ENDPOINTS
+2025-10-20 22:35:17,555 - INFO - ==================================================
+2025-10-20 22:35:17,555 - INFO - Testing GET /psychologists - Get All Psychologists
+2025-10-20 22:35:17,579 - INFO - [FAIL] - HTTP 500 - Cannot read properties of undefined (reading 'psychologistService') (0.024s)
+2025-10-20 22:35:17,580 - INFO - Testing POST /psychologists - Create Psychologist Profile
+2025-10-20 22:35:17,580 - INFO - Testing GET /psychologists/search - Search Psychologists by Name
+2025-10-20 22:35:17,605 - INFO - [FAIL] - HTTP 500 - Cannot read properties of undefined (reading 'psychologistService') (0.025s)
+2025-10-20 22:35:17,606 - INFO - Testing GET /psychologists/test-psychologist-123 - Get Psychologist by ID
+2025-10-20 22:35:17,657 - INFO - [FAIL] - HTTP 400 - Request failed (0.050s)
+2025-10-20 22:35:17,658 - INFO - 
+TESTING BOOKING ENDPOINTS
+2025-10-20 22:35:17,658 - INFO - ==================================================
+2025-10-20 22:35:17,658 - INFO - Testing GET /bookings/my-bookings - Get My Bookings
+2025-10-20 22:35:17,658 - INFO - Testing GET /bookings/psychologist-bookings - Get Psychologist's Bookings
+2025-10-20 22:35:17,658 - INFO - Testing POST /bookings - Create New Booking
+2025-10-20 22:35:17,658 - INFO - 
+TESTING EMPLOYEE SUBSCRIPTION ENDPOINTS
+2025-10-20 22:35:17,659 - INFO - ==================================================
+2025-10-20 22:35:17,659 - INFO - Testing POST /employee-subscriptions/verify/purchase - Verify Google Play Purchase
+2025-10-20 22:35:17,682 - INFO - [FAIL] - HTTP 400 - Validation failed (0.024s)
+2025-10-20 22:35:17,683 - INFO - Testing POST /employee-subscriptions/verify/subscription - Verify Google Play Subscription
+2025-10-20 22:35:17,709 - INFO - [FAIL] - HTTP 400 - Validation failed (0.026s)
+2025-10-20 22:35:17,709 - INFO - Testing GET /employee-subscriptions/active - Get Active Subscriptions
+2025-10-20 22:35:17,759 - INFO - [FAIL] - HTTP 400 - Validation failed (0.049s)
+2025-10-20 22:35:17,760 - INFO - Testing GET /employee-subscriptions/status - Check Subscription Status
+2025-10-20 22:35:17,811 - INFO - [PASS] - Success - Employee Subscription Service Status (0.051s)
+2025-10-20 22:35:17,812 - INFO - 
+TESTING AVAILABILITY ENDPOINTS
+2025-10-20 22:35:17,812 - INFO - ==================================================
+2025-10-20 22:35:17,812 - INFO - Testing POST /availability - Create Availability Slot
+2025-10-20 22:35:17,813 - INFO - Testing GET /availability/test-psychologist-123 - Get Availability by Psychologist ID
+2025-10-20 22:35:17,813 - INFO - Testing PATCH /availability/test-availability-123 - Update Availability Status
+2025-10-20 22:35:17,813 - INFO - Testing DELETE /availability/test-availability-123 - Delete Availability Slot
+2025-10-20 22:35:17,813 - INFO - Testing POST /availability/populate-n-days - Populate N Days Availability
+2025-10-20 22:35:17,813 - INFO - Testing PATCH /availability/toggle-day - Toggle Day Availability
+2025-10-20 22:35:17,813 - INFO - Testing GET /holidays - Get All Holidays
+2025-10-20 22:35:17,814 - INFO - Testing POST /holidays - Add Holiday
+2025-10-20 22:35:17,814 - INFO - Testing DELETE /holidays/test-holiday-123 - Delete Holiday
+2025-10-20 22:35:17,814 - INFO - 
+TESTING HEALTH CHECK ENDPOINTS
+2025-10-20 22:35:17,814 - INFO - ==================================================
+2025-10-20 22:35:17,814 - INFO - Testing GET /employee-subscriptions/status - Check Employee Subscription Service Status
+2025-10-20 22:35:17,861 - INFO - [PASS] - Success - Employee Subscription Service Status (0.048s)
+2025-10-20 22:35:17,861 - INFO - 
+TESTING EMPLOYEE MANAGEMENT ENDPOINTS
+2025-10-20 22:35:17,862 - INFO - ==================================================
+2025-10-20 22:35:17,862 - INFO - Testing GET /auth/supabase/company/test-company-123/employees-status - Get Employees with Credential Status
+2025-10-20 22:35:17,862 - INFO - 
+TESTING UI CONNECTIVITY
+2025-10-20 22:35:17,862 - INFO - ==================================================
+2025-10-20 22:35:19,931 - INFO - [PASS] - Main Landing Page - UI page accessible (2.069s)
+2025-10-20 22:35:21,988 - INFO - [PASS] - Login Page - UI page accessible (2.057s)
+2025-10-20 22:35:24,029 - INFO - [PASS] - Dashboard - UI page accessible (2.041s)
+2025-10-20 22:35:26,103 - INFO - [PASS] - Employee Management - UI page accessible (2.074s)
+2025-10-20 22:35:28,140 - INFO - [PASS] - Psychologist Management - UI page accessible (2.036s)
+2025-10-20 22:35:30,192 - INFO - [PASS] - Booking Management - UI page accessible (2.053s)
+2025-10-20 22:35:32,225 - INFO - [PASS] - Company Management - UI page accessible (2.032s)
+2025-10-20 22:35:34,271 - INFO - [PASS] - Settings Page - UI page accessible (2.047s)
+2025-10-20 22:35:34,272 - INFO - 
+GENERATING TEST REPORT
+2025-10-20 22:35:34,272 - INFO - ==================================================
+2025-10-20 22:35:34,274 - INFO - Test report saved to: api_ui_test_report.txt
+2025-10-20 22:35:34,274 - INFO - Test logs saved to: api_test_results.log
+2025-10-20 22:52:04,359 - INFO - STARTING THOUGHTPRO B2B API & UI INTEGRATION TESTS
+2025-10-20 22:52:04,362 - INFO - ================================================================================
+2025-10-20 22:52:04,363 - INFO - 
+TESTING AUTHENTICATION ENDPOINTS
+2025-10-20 22:52:04,363 - INFO - ==================================================
+2025-10-20 22:52:04,363 - INFO - Testing POST /auth/supabase/register-profile - Register User Profile
+2025-10-20 22:52:07,110 - INFO - [PASS] - Success - User profile created successfully (2.746s)
+2025-10-20 22:52:07,110 - INFO - Testing POST /auth/supabase/create-credentials - Create User Credentials
+2025-10-20 22:52:07,158 - INFO - [FAIL] - HTTP 400 - Request failed (0.048s)
+2025-10-20 22:52:07,158 - INFO - Testing POST /auth/supabase/login - User Login
+2025-10-20 22:52:07,621 - INFO - [FAIL] - HTTP 401 - Request failed (0.462s)
+2025-10-20 22:52:07,622 - INFO - Testing GET /auth/supabase/profile - Get User Profile
+2025-10-20 22:52:07,622 - INFO - Testing POST /auth/supabase/create-employee-temp - Create Employee with Temporary Password
+2025-10-20 22:52:07,622 - INFO - Testing POST /auth/supabase/login-temp - Login with Temporary Password
+2025-10-20 22:52:07,646 - INFO - [FAIL] - HTTP 400 - Request failed (0.023s)
+2025-10-20 22:52:07,646 - INFO - Testing PUT /auth/supabase/update-temp-password - Update Temporary Password
+2025-10-20 22:52:07,646 - INFO - 
+TESTING COMPANY ENDPOINTS
+2025-10-20 22:52:07,647 - INFO - ==================================================
+2025-10-20 22:52:07,647 - INFO - Testing POST /companies-supabase - Create Company with Supabase
+2025-10-20 22:52:07,672 - INFO - [FAIL] - HTTP 500 - Not Found - /api/v1/companies-supabase (0.025s)
+2025-10-20 22:52:07,672 - INFO - Testing POST /companies/test-company-123/employees - Create Employee with Email
+2025-10-20 22:52:07,673 - INFO - Testing GET /companies/test-company-123/employees - Get Company Employees
+2025-10-20 22:52:07,673 - INFO - Testing POST /companies/test-company-123/employees/test-employee-123/resend-credentials - Resend Employee Credentials
+2025-10-20 22:52:07,673 - INFO - Testing POST /companies/test-company-123/employees/bulk - Bulk Create Employees
+2025-10-20 22:52:07,673 - INFO - Testing POST /companies/forgot-password/personal-email - Send Password Reset Link
+2025-10-20 22:52:07,775 - INFO - [FAIL] - HTTP 400 - Request failed (0.101s)
+2025-10-20 22:52:07,776 - INFO - Testing GET /companies-supabase/test-company-123/subscription-config - Get Company Subscription Config
+2025-10-20 22:52:07,776 - INFO - Testing PUT /companies-supabase/test-company-123/subscription-config - Update Company Subscription Config
+2025-10-20 22:52:07,776 - INFO - 
+TESTING PSYCHOLOGIST ENDPOINTS
+2025-10-20 22:52:07,776 - INFO - ==================================================
+2025-10-20 22:52:07,776 - INFO - Testing GET /psychologists - Get All Psychologists
+2025-10-20 22:52:07,826 - INFO - [FAIL] - HTTP 500 - Cannot read properties of undefined (reading 'psychologistService') (0.050s)
+2025-10-20 22:52:07,826 - INFO - Testing POST /psychologists - Create Psychologist Profile
+2025-10-20 22:52:07,826 - INFO - Testing GET /psychologists/search - Search Psychologists by Name
+2025-10-20 22:52:07,877 - INFO - [FAIL] - HTTP 500 - Cannot read properties of undefined (reading 'psychologistService') (0.051s)
+2025-10-20 22:52:07,877 - INFO - Testing GET /psychologists/test-psychologist-123 - Get Psychologist by ID
+2025-10-20 22:52:07,904 - INFO - [FAIL] - HTTP 400 - Request failed (0.026s)
+2025-10-20 22:52:07,905 - INFO - 
+TESTING BOOKING ENDPOINTS
+2025-10-20 22:52:07,905 - INFO - ==================================================
+2025-10-20 22:52:07,905 - INFO - Testing GET /bookings/my-bookings - Get My Bookings
+2025-10-20 22:52:07,905 - INFO - Testing GET /bookings/psychologist-bookings - Get Psychologist's Bookings
+2025-10-20 22:52:07,905 - INFO - Testing POST /bookings - Create New Booking
+2025-10-20 22:52:07,906 - INFO - 
+TESTING EMPLOYEE SUBSCRIPTION ENDPOINTS
+2025-10-20 22:52:07,906 - INFO - ==================================================
+2025-10-20 22:52:07,906 - INFO - Testing POST /employee-subscriptions/verify/purchase - Verify Google Play Purchase
+2025-10-20 22:52:07,930 - INFO - [FAIL] - HTTP 400 - Validation failed (0.024s)
+2025-10-20 22:52:07,931 - INFO - Testing POST /employee-subscriptions/verify/subscription - Verify Google Play Subscription
+2025-10-20 22:52:07,979 - INFO - [FAIL] - HTTP 400 - Validation failed (0.048s)
+2025-10-20 22:52:07,980 - INFO - Testing GET /employee-subscriptions/active - Get Active Subscriptions
+2025-10-20 22:52:08,002 - INFO - [FAIL] - HTTP 400 - Validation failed (0.021s)
+2025-10-20 22:52:08,003 - INFO - Testing GET /employee-subscriptions/status - Check Subscription Status
+2025-10-20 22:52:08,030 - INFO - [PASS] - Success - Employee Subscription Service Status (0.028s)
+2025-10-20 22:52:08,031 - INFO - 
+TESTING AVAILABILITY ENDPOINTS
+2025-10-20 22:52:08,031 - INFO - ==================================================
+2025-10-20 22:52:08,031 - INFO - Testing POST /availability - Create Availability Slot
+2025-10-20 22:52:08,031 - INFO - Testing GET /availability/test-psychologist-123 - Get Availability by Psychologist ID
+2025-10-20 22:52:08,031 - INFO - Testing PATCH /availability/test-availability-123 - Update Availability Status
+2025-10-20 22:52:08,031 - INFO - Testing DELETE /availability/test-availability-123 - Delete Availability Slot
+2025-10-20 22:52:08,031 - INFO - Testing POST /availability/populate-n-days - Populate N Days Availability
+2025-10-20 22:52:08,032 - INFO - Testing PATCH /availability/toggle-day - Toggle Day Availability
+2025-10-20 22:52:08,032 - INFO - Testing GET /holidays - Get All Holidays
+2025-10-20 22:52:08,032 - INFO - Testing POST /holidays - Add Holiday
+2025-10-20 22:52:08,032 - INFO - Testing DELETE /holidays/test-holiday-123 - Delete Holiday
+2025-10-20 22:52:08,032 - INFO - 
+TESTING HEALTH CHECK ENDPOINTS
+2025-10-20 22:52:08,032 - INFO - ==================================================
+2025-10-20 22:52:08,032 - INFO - Testing GET /employee-subscriptions/status - Check Employee Subscription Service Status
+2025-10-20 22:52:08,082 - INFO - [PASS] - Success - Employee Subscription Service Status (0.049s)
+2025-10-20 22:52:08,083 - INFO - 
+TESTING EMPLOYEE MANAGEMENT ENDPOINTS
+2025-10-20 22:52:08,083 - INFO - ==================================================
+2025-10-20 22:52:08,083 - INFO - Testing GET /auth/supabase/company/test-company-123/employees-status - Get Employees with Credential Status
+2025-10-20 22:52:08,083 - INFO - 
+TESTING UI CONNECTIVITY
+2025-10-20 22:52:08,083 - INFO - ==================================================
+2025-10-20 22:52:12,185 - INFO - [FAIL] - Main Landing Page - UI server not running (npm start required) (0.000s)
+2025-10-20 22:52:16,276 - INFO - [FAIL] - Login Page - UI server not running (npm start required) (0.000s)
+2025-10-20 22:52:20,380 - INFO - [FAIL] - Dashboard - UI server not running (npm start required) (0.000s)
+2025-10-20 22:52:24,490 - INFO - [FAIL] - Employee Management - UI server not running (npm start required) (0.000s)
+2025-10-20 22:52:28,587 - INFO - [FAIL] - Psychologist Management - UI server not running (npm start required) (0.000s)
+2025-10-20 22:52:32,673 - INFO - [FAIL] - Booking Management - UI server not running (npm start required) (0.000s)
+2025-10-20 22:52:36,773 - INFO - [FAIL] - Company Management - UI server not running (npm start required) (0.000s)
+2025-10-20 22:52:40,862 - INFO - [FAIL] - Settings Page - UI server not running (npm start required) (0.000s)
+2025-10-20 22:52:40,863 - INFO - 
+GENERATING TEST REPORT
+2025-10-20 22:52:40,864 - INFO - ==================================================
+2025-10-20 22:52:40,870 - INFO - Test report saved to: api_ui_test_report.txt
+2025-10-20 22:52:40,870 - INFO - Test logs saved to: api_test_results.log

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Users, Search, Edit2, Trash2, UserPlus } from 'lucide-react';
+import { Users, Search, Edit2, Trash2, UserPlus, Upload, Check, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
+import BulkAddEmployee from './BulkAddEmployee';
 import './EmployeeList.css';
 
 const EmployeeList = () => {
@@ -10,6 +11,9 @@ const EmployeeList = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [availableDepartments, setAvailableDepartments] = useState([]);
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState({ show: false, employee: null });
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const navigate = useNavigate();
 
   // Get unique departments from employees
@@ -59,13 +63,25 @@ const EmployeeList = () => {
     navigate(`/add-employee?id=${employeeId}`);
   };
 
-  const handleDelete = (employeeId) => {
-    if (window.confirm('Are you sure you want to delete this employee?')) {
-      const updatedEmployees = employees.filter(emp => emp.id !== employeeId);
-      setEmployees(updatedEmployees);
-      setAvailableDepartments(getUniqueDepartments(updatedEmployees));
-      localStorage.setItem('employees', JSON.stringify(updatedEmployees));
-    }
+  const handleDelete = (employee) => {
+    setDeleteConfirm({ show: true, employee });
+  };
+
+  const confirmDelete = () => {
+    const employeeId = deleteConfirm.employee.id;
+    const updatedEmployees = employees.filter(emp => emp.id !== employeeId);
+    setEmployees(updatedEmployees);
+    setAvailableDepartments(getUniqueDepartments(updatedEmployees));
+    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
+    
+    // Close modal and show success message
+    setDeleteConfirm({ show: false, employee: null });
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirm({ show: false, employee: null });
   };
 
   const handleAddNew = () => {
@@ -86,10 +102,16 @@ const EmployeeList = () => {
             </div>
           </div>
           
-          <button onClick={handleAddNew} className="add-employee-btn">
-            <UserPlus size={20} />
-            <span>Add Employee</span>
-          </button>
+          <div className="header-buttons">
+            <button onClick={handleAddNew} className="add-employee-btn">
+              <UserPlus size={20} />
+              <span>Add Employee</span>
+            </button>
+            <button onClick={() => setShowBulkModal(true)} className="bulk-add-btn">
+              <Upload size={20} />
+              <span>Bulk Add</span>
+            </button>
+          </div>
         </div>
 
         <div className="employee-list-actions">
@@ -97,7 +119,7 @@ const EmployeeList = () => {
             <Search size={20} className="search-icon" />
             <input
               type="text"
-              placeholder="Search by name or email..."
+              placeholder="Search Employee"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
@@ -168,7 +190,7 @@ const EmployeeList = () => {
                     <Edit2 size={16} />
                   </button>
                   <button 
-                    onClick={() => handleDelete(employee.id)}
+                    onClick={() => handleDelete(employee)}
                     className="action-btn delete-btn"
                     title="Delete employee"
                   >
@@ -180,6 +202,57 @@ const EmployeeList = () => {
           </div>
         )}
       </div>
+
+      {/* Success Message */}
+      {showSuccessMessage && (
+        <div className="success-message">
+          <Check size={20} />
+          Employee deleted successfully!
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm.show && (
+        <div className="modal-overlay">
+          <div className="confirmation-modal">
+            <div className="modal-header">
+              <h3>Delete Employee</h3>
+              <button 
+                onClick={cancelDelete} 
+                className="modal-close-btn"
+                title="Close"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>Are you sure you want to delete <strong>{deleteConfirm.employee?.name}</strong>?</p>
+              <p className="warning-text">This action cannot be undone.</p>
+            </div>
+            <div className="modal-actions">
+              <button onClick={cancelDelete} className="cancel-btn">
+                Cancel
+              </button>
+              <button onClick={confirmDelete} className="confirm-delete-btn">
+                <Trash2 size={16} />
+                Delete Employee
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showBulkModal && (
+        <BulkAddEmployee 
+          onClose={() => setShowBulkModal(false)}
+          onSuccess={() => {
+            setShowBulkModal(false);
+            // Refresh employee list
+            const savedEmployees = JSON.parse(localStorage.getItem('employees') || '[]');
+            setEmployees(savedEmployees);
+          }}
+        />
+      )}
     </div>
   );
 };

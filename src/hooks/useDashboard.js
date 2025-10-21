@@ -10,32 +10,9 @@ export const useDashboard = () => {
     try {
       setLoading(true);
       
-      // Simulated data - REMOVED: score and subtitle fields
-      const mockData = {
-        productivity: {
-          daily: { value: '4 Hours', trend: 'up', trendValue: '10 Minutes' },
-          weekly: { value: '20 Hours', trend: 'up', trendValue: '2 Hours' },
-          today: { value: '20 Hours', trend: 'up', trendValue: '15 Minutes' },
-          yesterday: { value: '20 Hours', trend: 'up', trendValue: '1 Hour' },
-          thisWeek: { value: '20 Hours', trend: 'up', trendValue: '3 Hours' }
-        },
-        phoneUsageWeekdays: {
-          daily: { value: '4 Hours', trend: 'down', trendValue: '30 Minutes' },
-          weekly: { value: '20 Hours', trend: 'down', trendValue: '1 Hour' },
-          today: { value: '20 Hours', trend: 'up', trendValue: '45 Minutes' },
-          yesterday: { value: '20 Hours', trend: 'down', trendValue: '20 Minutes' },
-          thisWeek: { value: '20 Hours', trend: 'up', trendValue: '2 Hours' }
-        },
-        phoneUsageWork: {
-          daily: { value: '4 Hours', trend: 'down', trendValue: '15 Minutes' },
-          weekly: { value: '20 Hours', trend: 'up', trendValue: '1.5 Hours' },
-          today: { value: '20 Hours', trend: 'up', trendValue: '30 Minutes' },
-          yesterday: { value: '20 Hours', trend: 'down', trendValue: '10 Minutes' },
-          thisWeek: { value: '20 Hours', trend: 'up', trendValue: '2.5 Hours' }
-        }
-      };
-      
-      setData(mockData);
+      // Fetch real data from the API (with automatic fallback to mock data)
+      const dashboardData = await dashboardService.getDashboardData();
+      setData(dashboardData.data || dashboardData);
       setError(null);
     } catch (err) {
       setError(err.message);

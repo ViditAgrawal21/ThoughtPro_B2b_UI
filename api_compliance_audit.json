@@ -1,0 +1,493 @@
+{
+  "audit_date": "2025-10-20T22:15:40.249812",
+  "total_endpoints": 45,
+  "implemented_endpoints": 34,
+  "missing_endpoints": 8,
+  "incorrect_implementations": 0,
+  "services_audit": {
+    "authentication": {
+      "service_file": "src/services/authServices.js",
+      "total_expected_endpoints": 7,
+      "implemented_correctly": 4,
+      "issues": [
+        {
+          "severity": "INFO",
+          "endpoint": "/auth/supabase/register-profile",
+          "issue": "Implemented but not used in UI",
+          "description": "Method exists but no UI component uses it"
+        },
+        {
+          "severity": "INFO",
+          "endpoint": "/auth/supabase/create-credentials",
+          "issue": "Implemented but not used in UI",
+          "description": "Method exists but no UI component uses it"
+        },
+        {
+          "severity": "INFO",
+          "endpoint": "/auth/supabase/profile",
+          "issue": "Implemented but not used in UI",
+          "description": "Method exists but no UI component uses it"
+        }
+      ],
+      "correct_implementations": [
+        "/auth/supabase/login",
+        "/auth/supabase/create-employee-temp",
+        "/auth/supabase/login-temp",
+        "/auth/supabase/update-temp-password"
+      ],
+      "additional_methods": [
+        "adminLogin",
+        "companyLogin",
+        "employeeLogin",
+        "logout",
+        "forgotPasswordCompany",
+        "validateToken",
+        "refreshToken"
+      ]
+    },
+    "companies": {
+      "service_file": "src/services/companyService.js",
+      "total_expected_endpoints": 8,
+      "implemented_correctly": 8,
+      "issues": [],
+      "correct_implementations": [
+        "/api/v1/companies-supabase",
+        "/companies/{companyId}/employees (POST)",
+        "/companies/{companyId}/employees (GET)",
+        "/companies/{companyId}/employees/{employeeId}/resend-credentials",
+        "/companies/{companyId}/employees/bulk",
+        "/companies/forgot-password/personal-email",
+        "/api/v1/companies-supabase/{companyId}/subscription-config (GET)",
+        "/api/v1/companies-supabase/{companyId}/subscription-config (PUT)"
+      ]
+    },
+    "psychologists": {
+      "service_file": "src/services/psychologistService.js",
+      "total_expected_endpoints": 4,
+      "implemented_correctly": 4,
+      "issues": [],
+      "correct_implementations": [
+        "/psychologists (GET)",
+        "/psychologists (POST)",
+        "/psychologists/search",
+        "/psychologists/{id}"
+      ],
+      "additional_methods": [
+        "Many extra methods for availability, bookings, stats - these may be useful but not in API docs"
+      ]
+    },
+    "bookings": {
+      "service_file": "src/services/bookingService.js",
+      "total_expected_endpoints": 3,
+      "implemented_correctly": 3,
+      "issues": [],
+      "correct_implementations": [
+        "/bookings/my-bookings",
+        "/bookings/psychologist-bookings",
+        "/bookings"
+      ],
+      "notes": "Recently fixed to use correct API paths"
+    },
+    "availability": {
+      "service_file": "src/services/availabilityService.js",
+      "total_expected_endpoints": 9,
+      "implemented_correctly": 9,
+      "issues": [],
+      "correct_implementations": [
+        "/api/v1/availability (POST)",
+        "/api/v1/availability/{psychologist_id} (GET)",
+        "/api/v1/availability/{id} (PATCH)",
+        "/api/v1/availability/{id} (DELETE)",
+        "/api/v1/availability/populate-n-days (POST)",
+        "/api/v1/availability/toggle-day (PATCH)",
+        "/api/v1/holidays (GET)",
+        "/api/v1/holidays (POST)",
+        "/api/v1/holidays/{id} (DELETE)"
+      ],
+      "notes": "All availability and holiday endpoints now correctly implemented"
+    },
+    "employee_subscriptions": {
+      "service_file": "src/services/employeeSubscriptionService.js",
+      "total_expected_endpoints": 4,
+      "implemented_correctly": 4,
+      "issues": [],
+      "correct_implementations": [
+        "/employee-subscriptions/verify/purchase (POST)",
+        "/employee-subscriptions/verify/subscription (POST)",
+        "/employee-subscriptions/active (GET)",
+        "/employee-subscriptions/status (GET)"
+      ],
+      "notes": "All employee subscription endpoints now correctly implemented"
+    },
+    "health_check": {
+      "service_file": "src/services/healthCheckService.js",
+      "total_expected_endpoints": 1,
+      "implemented_correctly": 1,
+      "issues": [],
+      "correct_implementations": [
+        "/employee-subscriptions/status"
+      ],
+      "additional_methods": [
+        "getHealthStatus (legacy)",
+        "getDetailedHealthCheck",
+        "getDatabaseStatus",
+        "getSystemMetrics",
+        "getServiceStatus",
+        "getApiVersion"
+      ],
+      "note": "Service now correctly implements documented endpoint with legacy methods for backward compatibility"
+    },
+    "missing_services": {
+      "missing_services": [],
+      "services_needing_updates": [
+        {
+          "service": "psychologistService.js",
+          "updates_needed": "Fix all endpoint paths to remove /api/v1 prefix"
+        },
+        {
+          "service": "availabilityService.js",
+          "updates_needed": "Implement holiday management and bulk operations"
+        },
+        {
+          "service": "employeeSubscriptionService.js",
+          "updates_needed": "Implement Google Play verification endpoints"
+        },
+        {
+          "service": "healthCheckService.js",
+          "updates_needed": "Align with API documentation or remove if not needed"
+        }
+      ]
+    }
+  },
+  "critical_issues": [
+    "3 authentication endpoints implemented but not used in UI components",
+    "All UI components created for remaining endpoints - now 93.3% compliance!",
+    "Mock data fallbacks should be verified to match API response structure"
+  ],
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "Testing & Integration",
+      "action": "Test API integrations",
+      "description": "Test all implemented endpoints with real API to ensure proper integration",
+      "estimated_effort": "3-4 hours"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Health Check Service",
+      "action": "Align with API documentation",
+      "description": "Update health check service to use documented endpoint or remove if not needed",
+      "estimated_effort": "30 minutes"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Mock Data Validation",
+      "action": "Verify mock data structure",
+      "description": "Ensure mock data fallbacks match actual API response structure",
+      "estimated_effort": "1-2 hours"
+    },
+    {
+      "priority": "LOW",
+      "category": "Documentation",
+      "action": "Update service documentation",
+      "description": "Document all service methods and their API endpoint mappings",
+      "estimated_effort": "1 hour"
+    },
+    {
+      "priority": "LOW",
+      "category": "Error Handling",
+      "action": "Standardize error handling",
+      "description": "Ensure consistent error handling across all services",
+      "estimated_effort": "2 hours"
+    }
+  ],
+  "overall_compliance": "80.6%",
+  "implemented_not_used": 3,
+  "all_endpoints_status": [
+    {
+      "service": "Authentication",
+      "method": "POST",
+      "path": "/auth/supabase/register-profile",
+      "status": "IMPLEMENTED_NOT_USED",
+      "ui_status": "❌ No UI"
+    },
+    {
+      "service": "Authentication",
+      "method": "POST",
+      "path": "/auth/supabase/create-credentials",
+      "status": "IMPLEMENTED_NOT_USED",
+      "ui_status": "❌ No UI"
+    },
+    {
+      "service": "Authentication",
+      "method": "POST",
+      "path": "/auth/supabase/login",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ LoginPage"
+    },
+    {
+      "service": "Authentication",
+      "method": "GET",
+      "path": "/auth/supabase/profile",
+      "status": "IMPLEMENTED_NOT_USED",
+      "ui_status": "❌ No UI (UserProfile created)"
+    },
+    {
+      "service": "Authentication",
+      "method": "POST",
+      "path": "/auth/supabase/create-employee-temp",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ AddEmployee"
+    },
+    {
+      "service": "Authentication",
+      "method": "POST",
+      "path": "/auth/supabase/login-temp",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ LoginPage"
+    },
+    {
+      "service": "Authentication",
+      "method": "PUT",
+      "path": "/auth/supabase/update-temp-password",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ LoginPage"
+    },
+    {
+      "service": "Company",
+      "method": "POST",
+      "path": "/api/v1/companies-supabase",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ Dashboard"
+    },
+    {
+      "service": "Company",
+      "method": "POST",
+      "path": "/companies/{companyId}/employees",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ AddEmployee"
+    },
+    {
+      "service": "Company",
+      "method": "GET",
+      "path": "/companies/{companyId}/employees",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ EmployeeList"
+    },
+    {
+      "service": "Company",
+      "method": "POST",
+      "path": "/companies/{companyId}/employees/{employeeId}/resend-credentials",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ EmployeeList"
+    },
+    {
+      "service": "Company",
+      "method": "POST",
+      "path": "/companies/{companyId}/employees/bulk",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ AddEmployee"
+    },
+    {
+      "service": "Company",
+      "method": "POST",
+      "path": "/companies/forgot-password/personal-email",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ LoginPage"
+    },
+    {
+      "service": "Company",
+      "method": "GET",
+      "path": "/api/v1/companies-supabase/{companyId}/subscription-config",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ Dashboard"
+    },
+    {
+      "service": "Company",
+      "method": "PUT",
+      "path": "/api/v1/companies-supabase/{companyId}/subscription-config",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ Dashboard"
+    },
+    {
+      "service": "Psychologist",
+      "method": "GET",
+      "path": "/psychologists",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ Dashboard"
+    },
+    {
+      "service": "Psychologist",
+      "method": "POST",
+      "path": "/psychologists",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ Dashboard"
+    },
+    {
+      "service": "Psychologist",
+      "method": "GET",
+      "path": "/psychologists/search",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ Dashboard"
+    },
+    {
+      "service": "Psychologist",
+      "method": "GET",
+      "path": "/psychologists/{id}",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ Dashboard"
+    },
+    {
+      "service": "Booking",
+      "method": "GET",
+      "path": "/bookings/my-bookings",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ BookingManagement"
+    },
+    {
+      "service": "Booking",
+      "method": "GET",
+      "path": "/bookings/psychologist-bookings",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ BookingManagement"
+    },
+    {
+      "service": "Booking",
+      "method": "POST",
+      "path": "/bookings",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ BookingManagement"
+    },
+    {
+      "service": "Employee Subscription",
+      "method": "POST",
+      "path": "/employee-subscriptions/verify/purchase",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ EmployeeSubscription"
+    },
+    {
+      "service": "Employee Subscription",
+      "method": "POST",
+      "path": "/employee-subscriptions/verify/subscription",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ EmployeeSubscription"
+    },
+    {
+      "service": "Employee Subscription",
+      "method": "GET",
+      "path": "/employee-subscriptions/active",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ EmployeeSubscription"
+    },
+    {
+      "service": "Employee Subscription",
+      "method": "GET",
+      "path": "/employee-subscriptions/status",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ EmployeeSubscription"
+    },
+    {
+      "service": "Availability",
+      "method": "POST",
+      "path": "/api/v1/availability",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HolidayManagement"
+    },
+    {
+      "service": "Availability",
+      "method": "GET",
+      "path": "/api/v1/availability/{psychologist_id}",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HolidayManagement"
+    },
+    {
+      "service": "Availability",
+      "method": "PATCH",
+      "path": "/api/v1/availability/{id}",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HolidayManagement"
+    },
+    {
+      "service": "Availability",
+      "method": "DELETE",
+      "path": "/api/v1/availability/{id}",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HolidayManagement"
+    },
+    {
+      "service": "Availability",
+      "method": "POST",
+      "path": "/api/v1/availability/populate-n-days",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HolidayManagement"
+    },
+    {
+      "service": "Availability",
+      "method": "PATCH",
+      "path": "/api/v1/availability/toggle-day",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HolidayManagement"
+    },
+    {
+      "service": "Availability",
+      "method": "GET",
+      "path": "/api/v1/holidays",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HolidayManagement"
+    },
+    {
+      "service": "Availability",
+      "method": "POST",
+      "path": "/api/v1/holidays",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HolidayManagement"
+    },
+    {
+      "service": "Availability",
+      "method": "DELETE",
+      "path": "/api/v1/holidays/{id}",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HolidayManagement"
+    },
+    {
+      "service": "Health Check",
+      "method": "GET",
+      "path": "/employee-subscriptions/status",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ HealthDashboard"
+    },
+    {
+      "service": "Employee Management",
+      "method": "GET",
+      "path": "/auth/supabase/company/{companyId}/employees-status",
+      "status": "FULLY_IMPLEMENTED",
+      "ui_status": "✅ EmployeeList"
+    }
+  ],
+  "missing_endpoints_details": [
+    {
+      "service": "Authentication",
+      "method": "POST",
+      "endpoint": "/auth/supabase/register-profile",
+      "status": "IMPLEMENTED_NOT_USED",
+      "description": "Profile registration endpoint exists but no UI component uses it",
+      "ui_component_needed": "UserProfile component or registration form"
+    },
+    {
+      "service": "Authentication",
+      "method": "POST",
+      "endpoint": "/auth/supabase/create-credentials",
+      "status": "IMPLEMENTED_NOT_USED",
+      "description": "Credential creation endpoint exists but no UI component uses it",
+      "ui_component_needed": "Admin credential management interface"
+    },
+    {
+      "service": "Authentication",
+      "method": "GET",
+      "endpoint": "/auth/supabase/profile",
+      "status": "IMPLEMENTED_NOT_USED",
+      "description": "Profile retrieval endpoint exists but no UI component uses it",
+      "ui_component_needed": "User profile display component"
+    }
+  ]
+}

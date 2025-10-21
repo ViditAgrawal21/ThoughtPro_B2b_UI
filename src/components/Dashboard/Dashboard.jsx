@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
-import { Target, Smartphone, Sun, Moon } from 'lucide-react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Target, Smartphone } from 'lucide-react';
 import Header from '../Header/Header';
 import MetricCard from './MetricCard';
 import CustomDashboard from './CustomDashboard';
+import AdminDashboard from './AdminDashboard';
+import CompanyDashboard from './CompanyDashboard';
 import { useDashboard } from '../../hooks/useDashboard';
 import { useSettings } from '../../hooks/useSettings';
-import { useTheme } from '../../hooks/useTheme';
+import { AuthContext } from '../../contexts/AuthContext';
+import { validateDashboardIntegration } from '../../utils/testApi';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('standard');
   const { data, loading, error } = useDashboard();
   const { settings } = useSettings();
-  const { theme, toggleTheme } = useTheme();
+  const { isAdmin, isCompanyUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    // Validate integration on component mount (no API calls)
+    validateDashboardIntegration();
+  }, []);
 
   if (loading) {
     return (
@@ -35,6 +43,15 @@ const Dashboard = () => {
         </div>
       </div>
     );
+  }
+
+  // Role-based dashboard rendering
+  if (isAdmin()) {
+    return <AdminDashboard />;
+  }
+  
+  if (isCompanyUser()) {
+    return <CompanyDashboard />;
   }
 
   return (
@@ -60,18 +77,6 @@ const Dashboard = () => {
               </button>
             </div>
           </div>
-          <div className="dashboard-header-right">
-            <button 
-              onClick={toggleTheme}
-              className="theme-toggle"
-              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-            >
-              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
-              <span className="theme-toggle-text">
-                {theme === 'light' ? 'Dark' : 'Light'}
-              </span>
-            </button>
-          </div>
         </div>
 
         {activeTab === 'custom' ? (
@@ -83,7 +88,7 @@ const Dashboard = () => {
               <div className="section">
                 <div className="section-header">
                   <Target size={24} className="section-icon" />
-                  <div>
+                  <div className="section-header-content">
                     <h3 className="section-title">Productivity Score Average</h3>
                     {/* REMOVED: <p className="section-subtitle">(Productive Apps/All Apps)×100</p> */}
                   </div>
@@ -103,7 +108,7 @@ const Dashboard = () => {
               <div className="section">
                 <div className="section-header">
                   <Smartphone size={24} className="section-icon" />
-                  <div>
+                  <div className="section-header-content">
                     <h3 className="section-title">Average Phone Usage on Weekdays</h3>
                   </div>
                 </div>
@@ -122,7 +127,7 @@ const Dashboard = () => {
               <div className="section">
                 <div className="section-header">
                   <Smartphone size={24} className="section-icon" />
-                  <div>
+                  <div className="section-header-content">
                     <h3 className="section-title">Average Phone Usage on Work Timings</h3>
                     {/* REMOVED: <p className="section-subtitle">10-5</p> */}
                   </div>

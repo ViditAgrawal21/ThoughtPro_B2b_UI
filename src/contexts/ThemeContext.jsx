@@ -1,9 +1,16 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { Sun, Moon, Monitor } from 'lucide-react';
 
 export const ThemeContext = createContext(null);
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState('dark');
+
+  const availableThemes = [
+    { value: 'light', label: 'Light', icon: Sun },
+    { value: 'dark', label: 'Dark', icon: Moon },
+    { value: 'system', label: 'System', icon: Monitor }
+  ];
 
   useEffect(() => {
     // Load saved theme from localStorage
@@ -15,7 +22,16 @@ export const ThemeProvider = ({ children }) => {
 
   useEffect(() => {
     // Apply theme to document
-    document.documentElement.setAttribute('data-theme', theme);
+    let actualTheme = theme;
+    
+    if (theme === 'system') {
+      // Use system preference
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      actualTheme = systemPrefersDark ? 'dark' : 'light';
+    }
+    
+    document.documentElement.setAttribute('data-theme', actualTheme);
+    document.documentElement.className = actualTheme;
     localStorage.setItem('theme', theme);
   }, [theme]);
 
@@ -26,7 +42,8 @@ export const ThemeProvider = ({ children }) => {
   const value = {
     theme,
     toggleTheme,
-    setTheme
+    setTheme,
+    availableThemes
   };
 
   return (

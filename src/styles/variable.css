@@ -1,16 +1,35 @@
 :root {
-  /* Colors - Default Dark Theme */
+  /* Colors - Primary Palette from Design */
   --color-primary: #D27AD5;
-  --color-secondary: #C841CC;
+  --color-primary-hover: #C841CC;
   --color-disabled: #C0C0C0;
-  --color-background: #0A0A0A;
-  --color-card-bg: #1A1A1A;
-  --color-text: #FFFFFF;
-  --color-text-secondary: #A0A0A0;
-  --color-border: #2A2A2A;
+  
+  /* Theme Colors - Light Theme (Default) */
+  --color-background: #FFFFFF;
+  --color-surface: #F8F9FA;
+  --color-card-bg: #FFFFFF;
+  --color-text: #1A1A1A;
+  --color-text-secondary: #6B7280;
+  --color-border: #E5E7EB;
+  --color-input-bg: #FFFFFF;
+  --color-hover: #F3F4F6;
+  
+  /* Status Colors */
   --color-success: #10B981;
   --color-warning: #F59E0B;
   --color-error: #EF4444;
+  --color-info: #3B82F6;
+  
+  /* Button Colors for Light Theme */
+  --btn-primary-bg: #D27AD5;
+  --btn-primary-hover: #C841CC;
+  --btn-primary-text: #FFFFFF;
+  --btn-secondary-bg: transparent;
+  --btn-secondary-border: #C841CC;
+  --btn-secondary-text: #D27AD5;
+  --btn-secondary-hover: #F3E8FF;
+  --btn-disabled-bg: #C0C0C0;
+  --btn-disabled-text: #666666;
   
   /* Spacing */
   --spacing-xs: 4px;
@@ -37,22 +56,9 @@
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;
   --transition-slow: 0.3s ease;
-}
-
-/* Light Theme */
-[data-theme="light"] {
-  --color-background: #FFFFFF;
-  --color-card-bg: #F8F9FA;
-  --color-text: #1A1A1A;
-  --color-text-secondary: #6B7280;
-  --color-border: #E5E7EB;
-}
-
-/* Dark Theme */
-[data-theme="dark"] {
-  --color-background: #0A0A0A;
-  --color-card-bg: #1A1A1A;
-  --color-text: #FFFFFF;
-  --color-text-secondary: #A0A0A0;
-  --color-border: #2A2A2A;
+  
+  /* Shadows for Light Theme */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }

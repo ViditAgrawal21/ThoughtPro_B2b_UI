@@ -1,0 +1,690 @@
+{
+  "summary": {
+    "total_tests": 39,
+    "successful_tests": 3,
+    "failed_tests": 36,
+    "success_rate": 7.6923076923076925,
+    "base_url": "https://thoughtprob2b.thoughthealer.org/api/v1",
+    "test_timestamp": "2025-10-20T22:58:20.139395"
+  },
+  "test_data_used": {
+    "user_email": "test.user.1760981296@example.com",
+    "company_id": "test-company-123"
+  },
+  "detailed_results": [
+    {
+      "timestamp": "2025-10-20T22:58:18.748573",
+      "method": "POST",
+      "endpoint": "/auth/supabase/register-profile",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/auth/supabase/register-profile",
+      "status_code": 201,
+      "duration_ms": 1863.04,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "message": "User profile created successfully",
+        "profile": {
+          "id": "c42e4afb-9140-49a3-9f8f-42d078125878",
+          "name": "Test User",
+          "email": "test.user.1760981296@example.com",
+          "role": "employee",
+          "planType": "basic",
+          "validityDays": 30,
+          "productId": "thoughtpro-b2b-basic"
+        }
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:18.779219",
+      "method": "POST",
+      "endpoint": "/auth/supabase/create-credentials",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/auth/supabase/create-credentials",
+      "status_code": 400,
+      "duration_ms": 29.65,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "Validation failed",
+        "errors": [
+          {
+            "type": "field",
+            "msg": "Valid profile ID is required",
+            "path": "profileId",
+            "location": "body"
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.129607",
+      "method": "POST",
+      "endpoint": "/auth/supabase/login",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/auth/supabase/login",
+      "status_code": 401,
+      "duration_ms": 350.39,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "Invalid credentials"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.156012",
+      "method": "GET",
+      "endpoint": "/auth/supabase/profile",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/auth/supabase/profile",
+      "status_code": 401,
+      "duration_ms": 25.4,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.186690",
+      "method": "POST",
+      "endpoint": "/auth/supabase/create-employee-temp",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/auth/supabase/create-employee-temp",
+      "status_code": 401,
+      "duration_ms": 30.68,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.213689",
+      "method": "POST",
+      "endpoint": "/auth/supabase/login-temp",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/auth/supabase/login-temp",
+      "status_code": 400,
+      "duration_ms": 26.0,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "Validation failed",
+        "errors": [
+          {
+            "type": "field",
+            "msg": "Password must be at least 6 characters",
+            "path": "password",
+            "location": "body"
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.238689",
+      "method": "PUT",
+      "endpoint": "/auth/supabase/update-temp-password",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/auth/supabase/update-temp-password",
+      "status_code": 401,
+      "duration_ms": 25.0,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.270201",
+      "method": "POST",
+      "endpoint": "/companies-supabase",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/companies-supabase",
+      "status_code": 500,
+      "duration_ms": 30.51,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "error": "Not Found - /api/v1/companies-supabase"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.296205",
+      "method": "POST",
+      "endpoint": "/companies/test-company-123/employees",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/companies/test-company-123/employees",
+      "status_code": 401,
+      "duration_ms": 26.0,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.323652",
+      "method": "GET",
+      "endpoint": "/companies/test-company-123/employees",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/companies/test-company-123/employees",
+      "status_code": 401,
+      "duration_ms": 26.45,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.358663",
+      "method": "POST",
+      "endpoint": "/companies/test-company-123/employees/test-employee-123/resend-credentials",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/companies/test-company-123/employees/test-employee-123/resend-credentials",
+      "status_code": 401,
+      "duration_ms": 34.01,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.385183",
+      "method": "POST",
+      "endpoint": "/companies/test-company-123/employees/bulk",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/companies/test-company-123/employees/bulk",
+      "status_code": 401,
+      "duration_ms": 25.52,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.413314",
+      "method": "POST",
+      "endpoint": "/companies/forgot-password/personal-email",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/companies/forgot-password/personal-email",
+      "status_code": 400,
+      "duration_ms": 27.13,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "Validation failed",
+        "errors": [
+          {
+            "type": "field",
+            "msg": "Valid email address is required (company or personal email)",
+            "path": "email",
+            "location": "body"
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.440207",
+      "method": "GET",
+      "endpoint": "/companies-supabase/test-company-123/subscription-config",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/companies-supabase/test-company-123/subscription-config",
+      "status_code": 500,
+      "duration_ms": 26.02,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "error": "Not Found - /api/v1/companies-supabase/test-company-123/subscription-config"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.467187",
+      "method": "PUT",
+      "endpoint": "/companies-supabase/test-company-123/subscription-config",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/companies-supabase/test-company-123/subscription-config",
+      "status_code": 500,
+      "duration_ms": 26.0,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "error": "Not Found - /api/v1/companies-supabase/test-company-123/subscription-config"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.498698",
+      "method": "GET",
+      "endpoint": "/auth/supabase/company/test-company-123/employees-status",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/auth/supabase/company/test-company-123/employees-status",
+      "status_code": 401,
+      "duration_ms": 31.51,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.524621",
+      "method": "GET",
+      "endpoint": "/psychologists",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/psychologists",
+      "status_code": 500,
+      "duration_ms": 24.92,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "error": "Cannot read properties of undefined (reading 'psychologistService')"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.552337",
+      "method": "POST",
+      "endpoint": "/psychologists",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/psychologists",
+      "status_code": 401,
+      "duration_ms": 26.72,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.577999",
+      "method": "GET",
+      "endpoint": "/psychologists/search",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/psychologists/search",
+      "status_code": 400,
+      "duration_ms": 24.65,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "Validation failed",
+        "errors": [
+          {
+            "type": "field",
+            "msg": "Search name is required",
+            "path": "name",
+            "location": "query"
+          },
+          {
+            "type": "field",
+            "msg": "Search name must be at least 2 characters",
+            "path": "name",
+            "location": "query"
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.602824",
+      "method": "GET",
+      "endpoint": "/psychologists/test-psychologist-123",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/psychologists/test-psychologist-123",
+      "status_code": 400,
+      "duration_ms": 24.83,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "Validation failed",
+        "errors": [
+          {
+            "type": "field",
+            "value": "test-psychologist-123",
+            "msg": "Invalid psychologist ID format",
+            "path": "id",
+            "location": "params"
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.629251",
+      "method": "GET",
+      "endpoint": "/bookings/my-bookings",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/bookings/my-bookings",
+      "status_code": 401,
+      "duration_ms": 25.45,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.654236",
+      "method": "GET",
+      "endpoint": "/bookings/psychologist-bookings",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/bookings/psychologist-bookings",
+      "status_code": 401,
+      "duration_ms": 23.98,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.680852",
+      "method": "POST",
+      "endpoint": "/bookings",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/bookings",
+      "status_code": 401,
+      "duration_ms": 26.62,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.709503",
+      "method": "POST",
+      "endpoint": "/employee-subscriptions/verify/purchase",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/employee-subscriptions/verify/purchase",
+      "status_code": 400,
+      "duration_ms": 27.67,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "error": "Validation failed",
+        "details": [
+          {
+            "type": "field",
+            "msg": "Employee email is required",
+            "path": "email",
+            "location": "body"
+          },
+          {
+            "type": "field",
+            "msg": "Valid employee email is required",
+            "path": "email",
+            "location": "body"
+          },
+          {
+            "type": "field",
+            "value": "test_purchase_token_1760981299",
+            "msg": "Purchase token must be at least 50 characters",
+            "path": "purchaseToken",
+            "location": "body"
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.735816",
+      "method": "POST",
+      "endpoint": "/employee-subscriptions/verify/subscription",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/employee-subscriptions/verify/subscription",
+      "status_code": 400,
+      "duration_ms": 26.31,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "error": "Validation failed",
+        "details": [
+          {
+            "type": "field",
+            "msg": "Employee email is required",
+            "path": "email",
+            "location": "body"
+          },
+          {
+            "type": "field",
+            "msg": "Valid employee email is required",
+            "path": "email",
+            "location": "body"
+          },
+          {
+            "type": "field",
+            "value": "test_sub_token_1760981299",
+            "msg": "Purchase token must be at least 50 characters",
+            "path": "purchaseToken",
+            "location": "body"
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.767858",
+      "method": "GET",
+      "endpoint": "/employee-subscriptions/active",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/employee-subscriptions/active",
+      "status_code": 400,
+      "duration_ms": 31.04,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "error": "Validation failed",
+        "details": [
+          {
+            "type": "field",
+            "msg": "Employee email parameter is required",
+            "path": "email",
+            "location": "query"
+          },
+          {
+            "type": "field",
+            "msg": "Valid employee email is required",
+            "path": "email",
+            "location": "query"
+          }
+        ]
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.800031",
+      "method": "GET",
+      "endpoint": "/employee-subscriptions/status",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/employee-subscriptions/status",
+      "status_code": 200,
+      "duration_ms": 31.17,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "message": "Employee Subscription Service Status",
+        "data": {
+          "isInitialized": false,
+          "packageName": "Missing",
+          "serviceAccountKey": "Missing",
+          "status": "Not configured",
+          "timestamp": "2025-10-20T17:28:27.873Z",
+          "environment": "production"
+        }
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.831350",
+      "method": "POST",
+      "endpoint": "/availability",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/availability",
+      "status_code": 401,
+      "duration_ms": 29.31,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.868732",
+      "method": "GET",
+      "endpoint": "/availability/test-psychologist-123",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/availability/test-psychologist-123",
+      "status_code": 401,
+      "duration_ms": 36.44,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.896066",
+      "method": "PATCH",
+      "endpoint": "/availability/test-availability-123",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/availability/test-availability-123",
+      "status_code": 401,
+      "duration_ms": 26.33,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.922490",
+      "method": "DELETE",
+      "endpoint": "/availability/test-availability-123",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/availability/test-availability-123",
+      "status_code": 401,
+      "duration_ms": 25.44,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.949997",
+      "method": "POST",
+      "endpoint": "/availability/populate-n-days",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/availability/populate-n-days",
+      "status_code": 401,
+      "duration_ms": 27.51,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:19.979220",
+      "method": "PATCH",
+      "endpoint": "/availability/toggle-day",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/availability/toggle-day",
+      "status_code": 401,
+      "duration_ms": 28.22,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:20.005672",
+      "method": "GET",
+      "endpoint": "/holidays",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/holidays",
+      "status_code": 401,
+      "duration_ms": 25.44,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:20.032090",
+      "method": "POST",
+      "endpoint": "/holidays",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/holidays",
+      "status_code": 401,
+      "duration_ms": 26.42,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:20.058984",
+      "method": "DELETE",
+      "endpoint": "/holidays/test-holiday-123",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/holidays/test-holiday-123",
+      "status_code": 401,
+      "duration_ms": 25.9,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "message": "No token, authorization denied"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:20.089313",
+      "method": "GET",
+      "endpoint": "/employee-subscriptions/status",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/employee-subscriptions/status",
+      "status_code": 200,
+      "duration_ms": 29.33,
+      "success": true,
+      "response_data": {
+        "success": true,
+        "message": "Employee Subscription Service Status",
+        "data": {
+          "isInitialized": false,
+          "packageName": "Missing",
+          "serviceAccountKey": "Missing",
+          "status": "Not configured",
+          "timestamp": "2025-10-20T17:28:28.164Z",
+          "environment": "production"
+        }
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:20.113988",
+      "method": "GET",
+      "endpoint": "/health",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/health",
+      "status_code": 500,
+      "duration_ms": 23.67,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "error": "Not Found - /api/v1/health"
+      },
+      "error": null
+    },
+    {
+      "timestamp": "2025-10-20T22:58:20.138359",
+      "method": "GET",
+      "endpoint": "/status",
+      "full_url": "https://thoughtprob2b.thoughthealer.org/api/v1/status",
+      "status_code": 500,
+      "duration_ms": 23.39,
+      "success": false,
+      "response_data": {
+        "success": false,
+        "error": "Not Found - /api/v1/status"
+      },
+      "error": null
+    }
+  ]
+}

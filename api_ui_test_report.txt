@@ -1,0 +1,108 @@
+
+===============================================================================
+                     THOUGHTPRO B2B API & UI TEST REPORT                        
+===============================================================================
+
+SUMMARY STATISTICS:
+-------------------------------------------------------------------------------
+Total Tests: 45
+[PASS] Passed: 3 (6.7%)
+[FAIL] Failed: 19 (42.2%)
+[WARN] Warnings: 0 (0.0%)
+[SKIP] Skipped: 23 (51.1%)
+
+API Base URL: https://thoughtprob2b.thoughthealer.org/api/v1
+UI Base URL: http://localhost:3000
+Test Time: 2025-10-20 22:52:40
+
+DETAILED RESULTS:
+-------------------------------------------------------------------------------
+
+* AUTHENTICATION:
+   [PASS] [OPEN] POST   /auth/supabase/register-profile                    (2.746s)
+   [FAIL] [OPEN] POST   /auth/supabase/create-credentials                  (0.048s)
+      └─ HTTP 400 - Request failed
+   [FAIL] [OPEN] POST   /auth/supabase/login                               (0.462s)
+      └─ HTTP 401 - Request failed
+   [SKIP] [AUTH] GET    /auth/supabase/profile                             (0.000s)
+   [SKIP] [AUTH] POST   /auth/supabase/create-employee-temp                (0.000s)
+   [FAIL] [OPEN] POST   /auth/supabase/login-temp                          (0.023s)
+      └─ HTTP 400 - Request failed
+   [SKIP] [AUTH] PUT    /auth/supabase/update-temp-password                (0.000s)
+   [SKIP] [AUTH] GET    /auth/supabase/company/test-company-123/employees-status (0.000s)
+
+* COMPANY MANAGEMENT:
+   [FAIL] [OPEN] POST   /companies-supabase                                (0.025s)
+      └─ HTTP 500 - Not Found - /api/v1/companies-supabase
+   [SKIP] [AUTH] POST   /companies/test-company-123/employees              (0.000s)
+   [SKIP] [AUTH] GET    /companies/test-company-123/employees              (0.000s)
+   [SKIP] [AUTH] POST   /companies/test-company-123/employees/test-employee-123/resend-credentials (0.000s)
+   [SKIP] [AUTH] POST   /companies/test-company-123/employees/bulk         (0.000s)
+   [FAIL] [OPEN] POST   /companies/forgot-password/personal-email          (0.101s)
+      └─ HTTP 400 - Request failed
+   [SKIP] [AUTH] GET    /companies-supabase/test-company-123/subscription-config (0.000s)
+   [SKIP] [AUTH] PUT    /companies-supabase/test-company-123/subscription-config (0.000s)
+
+* PSYCHOLOGIST MANAGEMENT:
+   [FAIL] [OPEN] GET    /psychologists                                     (0.050s)
+      └─ HTTP 500 - Cannot read properties of undefined (reading 'psychologistService')
+   [SKIP] [AUTH] POST   /psychologists                                     (0.000s)
+   [FAIL] [OPEN] GET    /psychologists/search                              (0.051s)
+      └─ HTTP 500 - Cannot read properties of undefined (reading 'psychologistService')
+   [FAIL] [OPEN] GET    /psychologists/test-psychologist-123               (0.026s)
+      └─ HTTP 400 - Request failed
+
+* BOOKING MANAGEMENT:
+   [SKIP] [AUTH] GET    /bookings/my-bookings                              (0.000s)
+   [SKIP] [AUTH] GET    /bookings/psychologist-bookings                    (0.000s)
+   [SKIP] [AUTH] POST   /bookings                                          (0.000s)
+
+* EMPLOYEE SUBSCRIPTIONS:
+   [FAIL] [OPEN] POST   /employee-subscriptions/verify/purchase            (0.024s)
+      └─ HTTP 400 - Validation failed
+   [FAIL] [OPEN] POST   /employee-subscriptions/verify/subscription        (0.048s)
+      └─ HTTP 400 - Validation failed
+   [FAIL] [OPEN] GET    /employee-subscriptions/active                     (0.021s)
+      └─ HTTP 400 - Validation failed
+   [PASS] [OPEN] GET    /employee-subscriptions/status                     (0.028s)
+   [PASS] [OPEN] GET    /employee-subscriptions/status                     (0.049s)
+
+* AVAILABILITY & HOLIDAYS:
+   [SKIP] [AUTH] POST   /availability                                      (0.000s)
+   [SKIP] [AUTH] GET    /availability/test-psychologist-123                (0.000s)
+   [SKIP] [AUTH] PATCH  /availability/test-availability-123                (0.000s)
+   [SKIP] [AUTH] DELETE /availability/test-availability-123                (0.000s)
+   [SKIP] [AUTH] POST   /availability/populate-n-days                      (0.000s)
+   [SKIP] [AUTH] PATCH  /availability/toggle-day                           (0.000s)
+   [SKIP] [AUTH] GET    /holidays                                          (0.000s)
+   [SKIP] [AUTH] POST   /holidays                                          (0.000s)
+   [SKIP] [AUTH] DELETE /holidays/test-holiday-123                         (0.000s)
+
+* UI TESTS:
+   [FAIL] [OPEN] GET    UI: /                                              (0.000s)
+      └─ UI server not running (npm start required)
+   [FAIL] [OPEN] GET    UI: /login                                         (0.000s)
+      └─ UI server not running (npm start required)
+   [FAIL] [OPEN] GET    UI: /dashboard                                     (0.000s)
+      └─ UI server not running (npm start required)
+   [FAIL] [OPEN] GET    UI: /employees                                     (0.000s)
+      └─ UI server not running (npm start required)
+   [FAIL] [OPEN] GET    UI: /psychologists                                 (0.000s)
+      └─ UI server not running (npm start required)
+   [FAIL] [OPEN] GET    UI: /bookings                                      (0.000s)
+      └─ UI server not running (npm start required)
+   [FAIL] [OPEN] GET    UI: /companies                                     (0.000s)
+      └─ UI server not running (npm start required)
+   [FAIL] [OPEN] GET    UI: /settings                                      (0.000s)
+      └─ UI server not running (npm start required)
+
+RECOMMENDATIONS:
+-------------------------------------------------------------------------------
+• Fix failed API endpoints before production deployment
+• Implement authentication to test protected endpoints
+• Ensure UI server is running (npm start) for complete testing
+• Verify API server is accessible and responding correctly
+• Check authentication flow for protected endpoints
+• Validate data models match API documentation
+
+END OF REPORT

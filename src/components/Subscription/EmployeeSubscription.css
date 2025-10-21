@@ -1,0 +1,494 @@
+.subscription-page {
+  min-height: 100vh;
+  background-color: var(--background-color);
+}
+
+.subscription-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.subscription-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.subscription-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.subscription-title h1 {
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.subscription-title svg {
+  color: var(--primary-color);
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.verify-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.verify-button.purchase {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.verify-button.purchase:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.verify-button.subscription {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.verify-button.subscription:hover {
+  background-color: var(--secondary-dark);
+  transform: translateY(-1px);
+}
+
+.verify-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  text-align: center;
+}
+
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--border-color);
+  border-top: 2px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.loading-state p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Messages */
+.error-message {
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.success-message {
+  background-color: #dcfce7;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Subscriptions Grid */
+.subscriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.subscription-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.subscription-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.subscription-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.plan-info h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 0.25rem 0;
+}
+
+.product-id {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+  background-color: var(--background-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  margin: 0;
+}
+
+.status-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.status-icon.active {
+  color: #16a34a;
+}
+
+.status-icon.warning {
+  color: #ea580c;
+}
+
+.status-icon.inactive {
+  color: #dc2626;
+}
+
+.status-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.subscription-details {
+  margin-bottom: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.detail-item svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--text-tertiary);
+}
+
+.subscription-type {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.type-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.type-badge.subscription {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.type-badge.purchase {
+  background-color: #f3e8ff;
+  color: #7c3aed;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  grid-column: 1 / -1;
+}
+
+.empty-state svg {
+  color: var(--text-tertiary);
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 0.5rem 0;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  margin: 0 0 2rem 0;
+  font-size: 1.1rem;
+}
+
+.empty-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 0.75rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: var(--text-secondary);
+}
+
+.verification-form {
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 0.875rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.cancel-button {
+  padding: 0.75rem 1.5rem;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  color: var(--text-secondary);
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: var(--background-light);
+  border-color: var(--border-hover);
+}
+
+.verify-submit-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.verify-submit-button:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+}
+
+.verify-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-top: 1px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .subscription-container {
+    padding: 1rem;
+  }
+
+  .subscription-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .subscription-title h1 {
+    font-size: 1.75rem;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .verify-button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .subscriptions-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .subscription-card {
+    padding: 1rem;
+  }
+
+  .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .modal-content {
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 1rem 1rem 0.75rem 1rem;
+  }
+
+  .modal-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .verification-form {
+    padding: 1rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .cancel-button,
+  .verify-submit-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

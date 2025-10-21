@@ -1,0 +1,92 @@
+/* API Status Indicator Styles */
+.api-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  border: 1px solid;
+  margin: 8px 0;
+  transition: all 0.2s ease;
+}
+
+.status-icon {
+  flex-shrink: 0;
+}
+
+.status-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.status-label {
+  font-weight: 600;
+  line-height: 1;
+}
+
+.status-message {
+  opacity: 0.8;
+  line-height: 1;
+}
+
+/* Status Variants */
+.status-connected {
+  background-color: #f0fdf4;
+  border-color: #22c55e;
+  color: #15803d;
+}
+
+.status-mock {
+  background-color: #fffbeb;
+  border-color: #f59e0b;
+  color: #d97706;
+}
+
+.status-error {
+  background-color: #fef2f2;
+  border-color: #ef4444;
+  color: #dc2626;
+}
+
+.status-connecting {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.status-connecting .status-icon {
+  animation: pulse 2s infinite;
+}
+
+.status-unknown {
+  background-color: #f8fafc;
+  border-color: #64748b;
+  color: #475569;
+}
+
+
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .api-status-indicator {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  
+  .status-icon {
+    width: 14px;
+    height: 14px;
+  }
+}
