@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { dashboardService } from '../services/dashboardService';
+import { mockDataService } from '../services/mockDataService';
 
 export const useDashboard = () => {
   const [data, setData] = useState(null);
@@ -10,9 +10,9 @@ export const useDashboard = () => {
     try {
       setLoading(true);
       
-      // Fetch real data from the API (with automatic fallback to mock data)
-      const dashboardData = await dashboardService.getDashboardData();
-      setData(dashboardData.data || dashboardData);
+      // Fetch mock data only for company dashboard
+      const dashboardData = await mockDataService.fetchMockData();
+      setData(dashboardData);
       setError(null);
     } catch (err) {
       setError(err.message);

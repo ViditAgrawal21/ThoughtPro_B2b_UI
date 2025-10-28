@@ -1,63 +1,57 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Save, ArrowLeft, Mail, Phone, MapPin, User, GraduationCap, Star } from 'lucide-react';
+import { UserPlus, Save, ArrowLeft, Mail, User, GraduationCap, Star, DollarSign, Clock } from 'lucide-react';
 import { psychologistService } from '../../services/psychologistService';
 import AdminHeader from '../Header/AdminHeader';
-import './AddPsychologist.css';
+import PhoneInput from '../Common/PhoneInput';
+import './AddPsychologist-Simple.css';
 
-const AddPsychologist = () => {
+const AddPsychologist = ({ onSuccess, onBack }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
-    phone: '',
-    address: '',
-    specializations: [],
-    qualifications: '',
-    experience: '',
+    mobile_number: '',
+    degree: '',
+    specialization: [],
+    experience_years: '',
     languages: [],
-    licenseNumber: '',
-    bio: '',
-    availability: {
-      monday: { available: false, startTime: '09:00', endTime: '17:00' },
-      tuesday: { available: false, startTime: '09:00', endTime: '17:00' },
-      wednesday: { available: false, startTime: '09:00', endTime: '17:00' },
-      thursday: { available: false, startTime: '09:00', endTime: '17:00' },
-      friday: { available: false, startTime: '09:00', endTime: '17:00' },
-      saturday: { available: false, startTime: '09:00', endTime: '17:00' },
-      sunday: { available: false, startTime: '09:00', endTime: '17:00' }
-    },
-    status: 'active'
+    emergency_call_rate: '',
+    session_45_minute_rate: '',
+    session_30_minute_rate: '',
+    rating: ''
   });
 
   const specializationOptions = [
-    'Anxiety Disorders',
-    'Depression',
-    'PTSD',
-    'Couples Therapy',
-    'Family Therapy',
-    'Child Psychology',
-    'Adolescent Psychology',
-    'Addiction Counseling',
-    'Grief Counseling',
-    'Cognitive Behavioral Therapy',
-    'Dialectical Behavior Therapy',
-    'EMDR',
-    'Mindfulness-Based Therapy',
-    'Trauma Therapy',
-    'Eating Disorders',
-    'OCD',
-    'Bipolar Disorder',
-    'ADHD',
-    'Autism Spectrum Disorders',
-    'Workplace Mental Health'
+    'anxiety',
+    'depression',
+    'stress_management',
+    'ptsd',
+    'couples_therapy',
+    'family_therapy',
+    'child_psychology',
+    'adolescent_psychology',
+    'addiction_counseling',
+    'grief_counseling',
+    'cognitive_behavioral_therapy',
+    'dialectical_behavior_therapy',
+    'emdr',
+    'mindfulness_based_therapy',
+    'trauma_therapy',
+    'eating_disorders',
+    'ocd',
+    'bipolar_disorder',
+    'adhd',
+    'autism_spectrum_disorders',
+    'workplace_mental_health'
   ];
 
   const languageOptions = [
     'English',
+    'Marathi',
+    'Hindi',
     'Spanish',
     'French',
     'German',
@@ -67,21 +61,20 @@ const AddPsychologist = () => {
     'Japanese',
     'Korean',
     'Arabic',
-    'Hindi',
-    'Russian'
+    'Russian',
   ];
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     
     if (type === 'checkbox') {
-      if (name.includes('specializations')) {
-        const specialization = name.replace('specializations_', '');
+      if (name.includes('specialization')) {
+        const specialization = name.replace('specialization_', '');
         setFormData(prev => ({
           ...prev,
-          specializations: checked 
-            ? [...prev.specializations, specialization]
-            : prev.specializations.filter(s => s !== specialization)
+          specialization: checked 
+            ? [...prev.specialization, specialization]
+            : prev.specialization.filter(s => s !== specialization)
         }));
       } else if (name.includes('languages')) {
         const language = name.replace('languages_', '');
@@ -90,18 +83,6 @@ const AddPsychologist = () => {
           languages: checked 
             ? [...prev.languages, language]
             : prev.languages.filter(l => l !== language)
-        }));
-      } else if (name.includes('availability')) {
-        const day = name.replace('availability_', '');
-        setFormData(prev => ({
-          ...prev,
-          availability: {
-            ...prev.availability,
-            [day]: {
-              ...prev.availability[day],
-              available: checked
-            }
-          }
         }));
       }
     } else {
@@ -120,28 +101,11 @@ const AddPsychologist = () => {
     }
   };
 
-  const handleAvailabilityTimeChange = (day, field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      availability: {
-        ...prev.availability,
-        [day]: {
-          ...prev.availability[day],
-          [field]: value
-        }
-      }
-    }));
-  };
-
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
-    }
-    
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
     }
     
     if (!formData.email.trim()) {
@@ -150,16 +114,16 @@ const AddPsychologist = () => {
       newErrors.email = 'Please enter a valid email';
     }
     
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
+    if (!formData.mobile_number.trim()) {
+      newErrors.mobile_number = 'Phone number is required';
     }
     
-    if (!formData.licenseNumber.trim()) {
-      newErrors.licenseNumber = 'License number is required';
+    if (!formData.degree.trim()) {
+      newErrors.degree = 'Degree is required';
     }
     
-    if (formData.specializations.length === 0) {
-      newErrors.specializations = 'Please select at least one specialization';
+    if (formData.specialization.length === 0) {
+      newErrors.specialization = 'Please select at least one specialization';
     }
     
     setErrors(newErrors);
@@ -176,21 +140,35 @@ const AddPsychologist = () => {
     setLoading(true);
     
     try {
+      // Prepare data matching API structure
       const psychologistData = {
-        ...formData,
-        name: `${formData.firstName} ${formData.lastName}`
+        name: formData.name,
+        email: formData.email,
+        mobile_number: formData.mobile_number.replace(/\D/g, ''), // Remove formatting
+        degree: formData.degree,
+        specialization: formData.specialization,
+        languages: formData.languages,
+        experience_years: formData.experience_years ? parseInt(formData.experience_years) : undefined,
+        emergency_call_rate: formData.emergency_call_rate ? parseFloat(formData.emergency_call_rate) : undefined,
+        session_45_minute_rate: formData.session_45_minute_rate ? parseFloat(formData.session_45_minute_rate) : undefined,
+        session_30_minute_rate: formData.session_30_minute_rate ? parseFloat(formData.session_30_minute_rate) : undefined,
+        rating: formData.rating ? parseFloat(formData.rating) : undefined
       };
       
       const result = await psychologistService.createPsychologist(psychologistData);
       
       if (result.success || result.id) {
-        // Success - redirect to psychologists list
-        navigate('/admin/psychologists', {
-          state: { 
-            message: 'Psychologist created successfully',
-            type: 'success'
-          }
-        });
+        // Success - call onSuccess callback or navigate
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          navigate('/admin/psychologists', {
+            state: { 
+              message: 'Psychologist created successfully',
+              type: 'success'
+            }
+          });
+        }
       } else {
         setErrors({ submit: result.error || 'Failed to create psychologist' });
       }
@@ -203,13 +181,16 @@ const AddPsychologist = () => {
   };
 
   const handleBack = () => {
-    navigate('/admin/psychologists');
+    if (onBack) {
+      onBack();
+    } else {
+      navigate('/admin/psychologists');
+    }
   };
 
   return (
     <div className="add-psychologist-page">
       <AdminHeader />
-      
       <div className="add-psychologist-container">
         <div className="add-psychologist-header">
           <button onClick={handleBack} className="back-button">
@@ -237,41 +218,22 @@ const AddPsychologist = () => {
               
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="firstName">
+                  <label htmlFor="name">
                     <User size={16} />
-                    First Name *
+                    Full Name *
                   </label>
                   <input
                     type="text"
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName}
+                    id="name"
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
-                    className={errors.firstName ? 'error' : ''}
-                    placeholder="Enter first name"
+                    className={errors.name ? 'error' : ''}
+                    placeholder="Enter full name"
                   />
-                  {errors.firstName && <span className="field-error">{errors.firstName}</span>}
+                  {errors.name && <span className="field-error">{errors.name}</span>}
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="lastName">
-                    <User size={16} />
-                    Last Name *
-                  </label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    className={errors.lastName ? 'error' : ''}
-                    placeholder="Enter last name"
-                  />
-                  {errors.lastName && <span className="field-error">{errors.lastName}</span>}
-                </div>
-              </div>
-
-              <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="email">
                     <Mail size={16} />
@@ -288,125 +250,156 @@ const AddPsychologist = () => {
                   />
                   {errors.email && <span className="field-error">{errors.email}</span>}
                 </div>
-
-                <div className="form-group">
-                  <label htmlFor="phone">
-                    <Phone size={16} />
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className={errors.phone ? 'error' : ''}
-                    placeholder="+1 (555) 123-4567"
-                  />
-                  {errors.phone && <span className="field-error">{errors.phone}</span>}
-                </div>
               </div>
 
-              <div className="form-group full-width">
-                <label htmlFor="address">
-                  <MapPin size={16} />
-                  Address
-                </label>
-                <textarea
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  placeholder="Enter address"
-                  rows="3"
-                />
-              </div>
-            </div>
-
-            {/* Professional Information */}
-            <div className="form-section">
-              <h3>Professional Information</h3>
-              
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="licenseNumber">
+                  <label htmlFor="mobile_number">
+                    Mobile Number *
+                  </label>
+                  <PhoneInput
+                    id="mobile_number"
+                    name="mobile_number"
+                    value={formData.mobile_number}
+                    onChange={(value) => setFormData(prev => ({ ...prev, mobile_number: value }))}
+                    error={errors.mobile_number}
+                    placeholder="Enter phone number"
+                    required
+                  />
+                  {errors.mobile_number && <span className="field-error">{errors.mobile_number}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="degree">
                     <GraduationCap size={16} />
-                    License Number *
+                    Degree *
                   </label>
                   <input
                     type="text"
-                    id="licenseNumber"
-                    name="licenseNumber"
-                    value={formData.licenseNumber}
+                    id="degree"
+                    name="degree"
+                    value={formData.degree}
                     onChange={handleInputChange}
-                    className={errors.licenseNumber ? 'error' : ''}
-                    placeholder="License number"
+                    className={errors.degree ? 'error' : ''}
+                    placeholder="e.g., Ph.D. in Clinical Psychology"
                   />
-                  {errors.licenseNumber && <span className="field-error">{errors.licenseNumber}</span>}
+                  {errors.degree && <span className="field-error">{errors.degree}</span>}
                 </div>
+              </div>
 
+              <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="experience">
+                  <label htmlFor="experience_years">
                     <Star size={16} />
                     Years of Experience
                   </label>
                   <input
                     type="number"
-                    id="experience"
-                    name="experience"
-                    value={formData.experience}
+                    id="experience_years"
+                    name="experience_years"
+                    value={formData.experience_years}
                     onChange={handleInputChange}
                     placeholder="Years of experience"
                     min="0"
                   />
                 </div>
+
+                <div className="form-group">
+                  <label htmlFor="rating">
+                    <Star size={16} />
+                    Rating (Optional)
+                  </label>
+                  <input
+                    type="number"
+                    id="rating"
+                    name="rating"
+                    value={formData.rating}
+                    onChange={handleInputChange}
+                    placeholder="e.g., 4.8"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Professional Information */}
+            <div className="form-section">
+              <h3>Rate Information (Optional)</h3>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="emergency_call_rate">
+                    <DollarSign size={16} />
+                    Emergency Call Rate
+                  </label>
+                  <input
+                    type="number"
+                    id="emergency_call_rate"
+                    name="emergency_call_rate"
+                    value={formData.emergency_call_rate}
+                    onChange={handleInputChange}
+                    placeholder="Enter emergency call rate"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="session_45_minute_rate">
+                    <Clock size={16} />
+                    45-Minute Session Rate
+                  </label>
+                  <input
+                    type="number"
+                    id="session_45_minute_rate"
+                    name="session_45_minute_rate"
+                    value={formData.session_45_minute_rate}
+                    onChange={handleInputChange}
+                    placeholder="Enter 45-minute session rate"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
               </div>
 
-              <div className="form-group full-width">
-                <label htmlFor="qualifications">
-                  <GraduationCap size={16} />
-                  Qualifications
-                </label>
-                <textarea
-                  id="qualifications"
-                  name="qualifications"
-                  value={formData.qualifications}
-                  onChange={handleInputChange}
-                  placeholder="Educational background and certifications"
-                  rows="3"
-                />
-              </div>
-
-
-
-              <div className="form-group full-width">
-                <label htmlFor="bio">Bio</label>
-                <textarea
-                  id="bio"
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleInputChange}
-                  placeholder="Brief professional bio"
-                  rows="4"
-                />
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="session_30_minute_rate">
+                    <Clock size={16} />
+                    30-Minute Session Rate
+                  </label>
+                  <input
+                    type="number"
+                    id="session_30_minute_rate"
+                    name="session_30_minute_rate"
+                    value={formData.session_30_minute_rate}
+                    onChange={handleInputChange}
+                    placeholder="Enter 30-minute session rate"
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+                <div className="form-group"></div>
               </div>
             </div>
 
             {/* Specializations */}
             <div className="form-section">
               <h3>Specializations *</h3>
-              {errors.specializations && <span className="field-error">{errors.specializations}</span>}
+              {errors.specialization && <span className="field-error">{errors.specialization}</span>}
               
               <div className="checkbox-grid">
                 {specializationOptions.map(specialization => (
                   <label key={specialization} className="checkbox-label">
                     <input
                       type="checkbox"
-                      name={`specializations_${specialization}`}
-                      checked={formData.specializations.includes(specialization)}
+                      name={`specialization_${specialization}`}
+                      checked={formData.specialization.includes(specialization)}
                       onChange={handleInputChange}
                     />
-                    <span>{specialization}</span>
+                    <span>{specialization.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
                   </label>
                 ))}
               </div>

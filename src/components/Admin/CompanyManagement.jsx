@@ -9,7 +9,6 @@ import {
   Phone, 
   MapPin, 
   User, 
-  Eye, 
   Edit,
   Trash2,
   Search,
@@ -19,11 +18,14 @@ import {
   XCircle,
   Lock,
   Copy,
-  RefreshCw
+  RefreshCw,
+  Settings,
+  X
 } from 'lucide-react';
 import { companyService } from '../../services/companyService';
 import AdminHeader from '../Header/AdminHeader';
 import CredentialsDisplay from './CredentialsDisplay';
+import AddCompany from './AddCompany';
 import './CompanyManagement.css';
 
 const CompanyManagement = () => {
@@ -40,6 +42,8 @@ const CompanyManagement = () => {
   const [showCredentials, setShowCredentials] = useState(null);
   const [notification, setNotification] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState(null);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -132,8 +136,9 @@ const CompanyManagement = () => {
   const loadCompanies = async () => {
     try {
       setLoading(true);
-      const response = await companyService.getAllCompanies();
-      
+      // Use admin endpoint to get all companies
+      const response = await companyService.getAllCompaniesAdmin();
+
       if (Array.isArray(response)) {
         setCompanies(response);
       } else if (response.data && Array.isArray(response.data)) {
@@ -144,6 +149,13 @@ const CompanyManagement = () => {
     } catch (error) {
       console.error('Error loading companies:', error);
       setCompanies([]);
+      setNotification({
+        type: 'error',
+        message: error?.message?.includes('Server error')
+          ? 'Unable to load company list. Server may be temporarily unavailable.'
+          : 'Failed to load company list. Please try again.'
+      });
+      setTimeout(() => setNotification(null), 5000);
     } finally {
       setLoading(false);
     }
@@ -354,7 +366,8 @@ const CompanyManagement = () => {
   const handleDeleteCompany = async (companyId) => {
     try {
       setLoading(true);
-      const result = await companyService.deleteCompany(companyId);
+      // Use admin delete endpoint
+      const result = await companyService.deleteCompanyAdmin(companyId);
       
       if (result.success) {
         setCompanies(companies.filter(c => c.id !== companyId));
@@ -455,18 +468,18 @@ const CompanyManagement = () => {
       <td>
         <div className="actions">
           <button 
-            className="action-btn view"
-            onClick={() => navigate(`/admin/companies/${company.id}`)}
-            title="View Details"
-          >
-            <Eye size={16} />
-          </button>
-          <button 
             className="action-btn edit"
             onClick={() => handleEditCompany(company)}
             title="Edit Company"
           >
             <Edit size={16} />
+          </button>
+          <button 
+            className="action-btn subscription"
+            onClick={() => setShowSubscriptionModal(company)}
+            title="Manage Subscription"
+          >
+            <Settings size={16} />
           </button>
           <button 
             className="action-btn delete"
@@ -929,6 +942,157 @@ const CompanyManagement = () => {
     </div>
   );
 
+  // Handle subscription plan update
+  const handleUpdateSubscription = async (companyId, newPlan) => {
+    setSubscriptionLoading(true);
+    try {
+      await companyService.updateCompanySubscriptionConfig(companyId, {
+        subscriptionPlan: newPlan,
+        updated_at: new Date().toISOString()
+      });
+      
+      // Update local companies state
+      setCompanies(prev => 
+        prev.map(company => 
+          company.id === companyId 
+            ? { ...company, subscriptionPlan: newPlan }
+            : company
+        )
+      );
+      
+      setShowSubscriptionModal(null);
+      setNotification({
+        type: 'success',
+        message: 'Subscription plan updated successfully!'
+      });
+      
+      // Auto-hide notification after 3 seconds
+      setTimeout(() => setNotification(null), 3000);
+      
+    } catch (error) {
+      console.error('Error updating subscription:', error);
+      setNotification({
+        type: 'error',
+        message: 'Failed to update subscription plan: ' + error.message
+      });
+      setTimeout(() => setNotification(null), 5000);
+    } finally {
+      setSubscriptionLoading(false);
+    }
+  };
+
+  const SubscriptionModal = () => {
+    const [selectedPlan, setSelectedPlan] = useState(showSubscriptionModal?.subscriptionPlan || 'basic');
+    
+    return (
+      <div className="modal-overlay">
+        <div className="modal-content subscription-modal">
+          <div className="modal-header">
+            <h3>Manage Subscription Plan</h3>
+            <button 
+              className="modal-close"
+              onClick={() => setShowSubscriptionModal(null)}
+              disabled={subscriptionLoading}
+            >
+              <X size={20} />
+            </button>
+          </div>
+          
+          <div className="modal-body">
+            <div className="company-info">
+              <div className="company-name">{showSubscriptionModal?.name}</div>
+              <div className="current-plan">
+                <span className="label">Current Plan:</span>
+                <span className="plan-badge">{showSubscriptionModal?.subscriptionPlan || 'Basic'}</span>
+              </div>
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="subscriptionPlan" className="form-label">Select New Plan</label>
+              <select
+                id="subscriptionPlan"
+                value={selectedPlan}
+                onChange={(e) => setSelectedPlan(e.target.value)}
+                disabled={subscriptionLoading}
+                className="subscription-select"
+              >
+                <option value="basic">Basic Plan</option>
+                <option value="premium">Premium Plan</option>
+                <option value="ultra">Ultra Plan</option>
+                <option value="business">Business Plan</option>
+                <option value="enterprise">Enterprise Plan</option>
+              </select>
+            </div>
+
+            <div className="plan-info">
+              <div className="plan-info-header">Plan Features</div>
+              <ul className="plan-features-list">
+                {selectedPlan === 'basic' && (
+                  <>
+                    <li>Up to 50 employees</li>
+                    <li>Basic analytics</li>
+                    <li>Email support</li>
+                  </>
+                )}
+                {selectedPlan === 'premium' && (
+                  <>
+                    <li>Up to 200 employees</li>
+                    <li>Advanced analytics</li>
+                    <li>Priority support</li>
+                    <li>Custom reports</li>
+                  </>
+                )}
+                {selectedPlan === 'ultra' && (
+                  <>
+                    <li>Up to 500 employees</li>
+                    <li>Premium analytics</li>
+                    <li>24/7 support</li>
+                    <li>Advanced integrations</li>
+                  </>
+                )}
+                {selectedPlan === 'business' && (
+                  <>
+                    <li>Up to 1000 employees</li>
+                    <li>Business analytics</li>
+                    <li>Dedicated support</li>
+                    <li>Custom features</li>
+                  </>
+                )}
+                {selectedPlan === 'enterprise' && (
+                  <>
+                    <li>Unlimited employees</li>
+                    <li>Enterprise analytics</li>
+                    <li>White-label options</li>
+                    <li>Custom solutions</li>
+                  </>
+                )}
+              </ul>
+            </div>
+          </div>
+          
+          <div className="modal-actions">
+            <button
+              type="button"
+              onClick={() => setShowSubscriptionModal(null)}
+              disabled={subscriptionLoading}
+              className="cancel-button"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => handleUpdateSubscription(showSubscriptionModal.id, selectedPlan)}
+              disabled={subscriptionLoading || selectedPlan === showSubscriptionModal?.subscriptionPlan}
+              className="update-button"
+            >
+              {subscriptionLoading ? 'Updating...' : 'Update Plan'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const DeleteConfirmModal = () => (
     <div className="modal-overlay">
       <div className="modal-content delete-confirm">
@@ -955,9 +1119,32 @@ const CompanyManagement = () => {
       <AdminHeader />
       
       <div className="company-management">
-        {view === 'list' ? <ListView /> : <FormView />}
+        {view === 'list' ? (
+          <ListView />
+        ) : view === 'add' ? (
+          <div>
+            <div className="add-company-header">
+              <button onClick={() => setView('list')} className="back-button">
+                <ArrowLeft size={20} />
+                <span>Back to Companies</span>
+              </button>
+            </div>
+            <AddCompany 
+              onSuccess={() => {
+                setView('list');
+                setNotification({ message: 'Company created successfully', type: 'success' });
+                loadCompanies();
+              }}
+              onBack={() => setView('list')}
+            />
+          </div>
+        ) : (
+          <FormView />
+        )}
         
         {showDeleteConfirm && <DeleteConfirmModal />}
+        
+        {showSubscriptionModal && <SubscriptionModal />}
         
         {showCredentials && (
           <CredentialsDisplay

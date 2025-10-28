@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Building2, Shield, AlertCircle } from 'lucide-react';
+import { Building2, Shield, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useSettings } from '../../hooks/useSettings';
 import { authService } from '../../services/authServices';
@@ -12,67 +12,84 @@ const CompanyLoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const { login } = useAuth();
   const { updateCompanyName } = useSettings();
   const navigate = useNavigate();
 
+  const validateDomain = (domain) => {
+    const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-_.]*[a-zA-Z0-9]\.[a-zA-Z]{2,}$/;
+    return domainRegex.test(domain);
+  };
+
+  const formatEmailFromDomain = (domain) => {
+    return `company@`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Validation
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
-    if (!validateEmail(email)) {
-      setError('Please enter a valid email address');
-      return;
+    let actualEmail = email;
+    if (!email.includes('@')) {
+      if (!validateDomain(email)) {
+        setError('Please enter a valid company domain (e.g., yourcompany.com)');
+        return;
+      }
+      actualEmail = formatEmailFromDomain(email);
+    } else {
+      if (!validateEmail(email)) {
+        setError('Please enter a valid email address');
+        return;
+      }
     }
 
     setLoading(true);
     
     try {
-      // Extract company name from email domain for display
-      const domain = email.split('@')[1];
       let companyName = 'Your Company';
+      let domain;
+      
+      if (email.includes('@')) {
+        domain = email.split('@')[1];
+      } else {
+        domain = email;
+      }
       
       if (domain) {
-        companyName = domain.split('.')[0].charAt(0).toUpperCase() + domain.split('.')[0].slice(1) + ' Company';
+        const baseName = domain.split('.')[0];
+        companyName = baseName.charAt(0).toUpperCase() + baseName.slice(1) + ' Company';
       }
       
       updateCompanyName(companyName);
       
-      // First, try logging in with regular company login
-      const result = await login(email, password, 'company');
+      const result = await login(actualEmail, password, 'company');
       
       if (result.success) {
-        // Successful regular login - redirect to company dashboard
         navigate('/dashboard');
       } else if (result.requiresPasswordSetup || result.requiresPasswordChange) {
-        // Password setup/change required - redirect to password setup with proper context
         navigate('/company/set-password', { 
           state: { 
-            email: email,
+            email: actualEmail,
             temporaryPassword: password,
             isFirstLogin: result.isFirstLogin || true,
             message: result.message || 'Welcome! Please set your new password to continue accessing your company portal.' 
           } 
         });
       } else {
-        // Regular login failed - this could be a temporary password scenario
-        // According to API docs, we should try temporary login flow
         try {
-          // Try login with temporary password API endpoint
-          const tempResult = await authService.loginWithTemporary(email, password);
+          const tempResult = await authService.loginWithTemporary(actualEmail, password);
           
           if (tempResult.requiresPasswordChange || tempResult.isFirstLogin) {
-            // Temporary login successful but needs password change
             navigate('/company/set-password', { 
               state: { 
-                email: email,
+                email: actualEmail,
                 temporaryPassword: password,
                 isFirstLogin: tempResult.isFirstLogin,
                 token: tempResult.token,
@@ -80,25 +97,29 @@ const CompanyLoginPage = () => {
               } 
             });
           } else if (tempResult.success) {
-            // Temporary login successful and no password change needed
             navigate('/dashboard');
           } else {
             setError('Invalid credentials. Please check your email and password or contact your administrator.');
           }
         } catch (tempError) {
-          // Both regular and temporary login failed
           setError(result.error || result.message || 'Invalid company credentials. Please check your email and password or contact your administrator for assistance.');
         }
       }
     } catch (err) {
       console.error('Company login error:', err);
       
-      // Enhanced error handling based on API response
       if (err.message) {
-        if (err.message.includes('temporary') || err.message.includes('first') || err.message.includes('setup')) {
+        if (err.message.includes('Authentication required') || 
+            err.message.includes('401') || 
+            err.message.includes('Unauthorized') ||
+            err.message.includes('Invalid credentials')) {
+          setError('Invalid credentials. Please check your email and password.');
+        } else if (err.message.includes('temporary') || 
+                   err.message.includes('first') || 
+                   err.message.includes('setup')) {
           navigate('/company/set-password', { 
             state: { 
-              email: email,
+              email: actualEmail,
               temporaryPassword: password,
               isFirstLogin: true,
               message: 'First time login detected. Please set your new password to continue.' 
@@ -107,34 +128,23 @@ const CompanyLoginPage = () => {
         } else if (err.message.includes('password') && err.message.includes('change')) {
           navigate('/company/set-password', { 
             state: { 
-              email: email,
+              email: actualEmail,
               temporaryPassword: password,
               message: 'Password change required. Please set your new password.' 
             } 
           });
+        } else if (err.message.includes('Network error') || 
+                   err.message.includes('NETWORK_ERROR')) {
+          setError('Network connection error. Please check your internet connection.');
+        } else if (err.message.includes('Server error') || 
+                   err.message.includes('500')) {
+          setError('Server temporarily unavailable. Please try again later.');
         } else {
-          setError(err.message);
+          setError('Invalid credentials. Please check your email and password.');
         }
       } else {
-        setError('Login failed. Please try again or contact your administrator.');
+        setError('Invalid credentials. Please check your email and password.');
       }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDemoLogin = async () => {
-    updateCompanyName('Demo Company Ltd');
-    
-    setLoading(true);
-    try {
-      const result = await login('company@demo.com', 'demo123');
-      if (result.success) {
-        navigate('/dashboard');
-      }
-    } catch (err) {
-      console.error('Demo login error:', err);
-      setError('Demo login failed');
     } finally {
       setLoading(false);
     }
@@ -153,12 +163,12 @@ const CompanyLoginPage = () => {
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="input-group">
-            <label className="label">Company Email</label>
+            <label className="label">Company Domain or Email</label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="company@yourcompany.com"
+              placeholder="company@gmail.com"
               className="input"
               disabled={loading}
             />
@@ -166,14 +176,24 @@ const CompanyLoginPage = () => {
 
           <div className="input-group">
             <label className="label">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter company password"
-              className="input"
-              disabled={loading}
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter company password"
+                className="input"
+                disabled={loading}
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={loading}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
           {error && (
@@ -190,34 +210,9 @@ const CompanyLoginPage = () => {
           >
             {loading ? 'Signing in...' : 'Company Sign In'}
           </button>
-
-          <button 
-            type="button"
-            onClick={handleDemoLogin} 
-            className="demo-button"
-            disabled={loading}
-          >
-            Use Demo Company Account
-          </button>
         </form>
 
         <div className="login-footer">
-          {/* <div className="company-features">
-            <h4>Company Portal Features:</h4>
-            <ul>
-              <li>✓ Employee wellness monitoring</li>
-              <li>✓ Therapy session management</li>
-              <li>✓ Company analytics dashboard</li>
-              <li>✓ Employee onboarding tools</li>
-            </ul>
-          </div> */}
-          
-          <div className="forgot-password">
-            <Link to="/company/forgot-password" className="forgot-link">
-              Forgot Password?
-            </Link>
-          </div>
-          
           <div className="login-switch">
             <p>System administrator?</p>
             <Link to="/admin/login" className="switch-link">

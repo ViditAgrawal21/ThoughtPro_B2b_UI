@@ -61,9 +61,39 @@ const CompanyList = () => {
       const response = await companyService.getAllCompanies();
       
       if (Array.isArray(response)) {
-        setCompanies(response);
+        // Enhance each company with subscription config
+        const companiesWithSubscription = await Promise.all(
+          response.map(async (company) => {
+            try {
+              const subscriptionResponse = await companyService.getCompanySubscriptionConfig(company.id);
+              return {
+                ...company,
+                subscriptionConfig: subscriptionResponse.data || null
+              };
+            } catch (error) {
+              console.warn(`Failed to load subscription for company ${company.id}:`, error);
+              return company;
+            }
+          })
+        );
+        setCompanies(companiesWithSubscription);
       } else if (response.data && Array.isArray(response.data)) {
-        setCompanies(response.data);
+        // Enhance each company with subscription config
+        const companiesWithSubscription = await Promise.all(
+          response.data.map(async (company) => {
+            try {
+              const subscriptionResponse = await companyService.getCompanySubscriptionConfig(company.id);
+              return {
+                ...company,
+                subscriptionConfig: subscriptionResponse.data || null
+              };
+            } catch (error) {
+              console.warn(`Failed to load subscription for company ${company.id}:`, error);
+              return company;
+            }
+          })
+        );
+        setCompanies(companiesWithSubscription);
       } else {
         setCompanies([]);
       }
@@ -86,7 +116,12 @@ const CompanyList = () => {
 
   const handleEditCompany = (company) => {
     // Navigate to edit page or show edit modal
-    window.location.href = `/companies/${company.id}/edit`;
+    navigate(`/admin/companies/${company.id}/edit`);
+  };
+
+  const handleManageSubscription = (company) => {
+    // Navigate to subscription management page
+    navigate(`/admin/companies/${company.id}/subscription`);
   };
 
   const handleDeleteCompany = async (companyId) => {
@@ -141,7 +176,12 @@ const CompanyList = () => {
       </td>
       <td>
         <div className="subscription-plan">
-          {company.subscriptionPlan || 'N/A'}
+          <div className="plan-type">
+            {company.subscriptionConfig?.default_plan_type || company.subscriptionPlan || 'N/A'}
+          </div>
+          <div className="employee-limit">
+            Limit: {company.subscriptionConfig?.employee_limit || 'N/A'}
+          </div>
         </div>
       </td>
       <td>
@@ -164,6 +204,13 @@ const CompanyList = () => {
             title="Edit Company"
           >
             <Edit size={16} />
+          </button>
+          <button 
+            className="action-btn subscription"
+            onClick={() => handleManageSubscription(company)}
+            title="Manage Subscription"
+          >
+            <Users size={16} />
           </button>
           <button 
             className="action-btn delete"

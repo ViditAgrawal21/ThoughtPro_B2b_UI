@@ -1,297 +1,374 @@
-import { apiService } from './api';
-import { mockDataService } from './mockDataService';
+// bookingService.js & adminService.js - Handle booking and admin operations
+// Updated for ThoughtPro B2B API Configuration
 
-class BookingService {
-  // Booking Management Operations (API Documentation Compliant)
-  // Only implements the 3 documented endpoints:
-  // 1. GET /bookings/my-bookings - Get current user's bookings
-  // 2. GET /bookings/psychologist-bookings - Get psychologist's bookings  
-  // 3. POST /bookings - Create a new booking
+const BASE_URL = process.env.REACT_APP_API_URL || 'https://thoughtprob2b.thoughthealer.org/api/v1';
+const DEBUG_MODE = process.env.REACT_APP_DEBUG_MODE === 'true';
+const OFFLINE_MODE = process.env.REACT_APP_OFFLINE_MODE === 'true';
 
-  // Legacy method - not in API docs but needed for backward compatibility
-  async getAllBookings(page = 1, limit = 10, filters = {}) {
-    console.warn('getAllBookings is not in API documentation. Use getMyBookings or getPsychologistBookings instead.');
+// ========== ADMIN SERVICE ==========
+export const adminService = {
+  /**
+   * Get psychologists overview with booking statistics
+   */
+  getPsychologistsOverview: async () => {
     try {
-      const params = new URLSearchParams();
-      params.append('page', page);
-      params.append('limit', limit);
-      
-      // Add filters
-      Object.keys(filters).forEach(key => {
-        if (filters[key]) {
-          params.append(key, filters[key]);
+      const response = await fetch(`${BASE_URL}/admin/psychologists-overview`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       });
 
-      // Try to use my-bookings as fallback
-      const response = await apiService.get(`/bookings/my-bookings?${params}`);
-      return response;
-    } catch (error) {
-      console.warn('Bookings API unavailable, using mock data:', error.message);
-      // Return mock data when API is not available
-      return mockDataService.getBookings();
-    }
-  }
-
-  // Legacy method - not in API docs but needed for backward compatibility
-  async getBookingById(bookingId) {
-    console.warn('getBookingById is not in API documentation. Consider using getMyBookings with filtering instead.');
-    try {
-      // Since there's no endpoint for single booking, try to get from my-bookings and filter
-      const response = await apiService.get('/bookings/my-bookings');
-      if (response.success && response.data) {
-        const booking = response.data.find(b => b.id === bookingId);
-        if (booking) {
-          return { success: true, data: booking };
-        }
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch psychologists overview');
       }
-      throw new Error('Booking not found');
-    } catch (error) {
-      throw new Error('Failed to fetch booking details');
-    }
-  }
 
-  async createBooking(bookingData) {
-    try {
-      // According to API docs: POST /bookings
-      const response = await apiService.post('/bookings', {
-        psychologist_id: bookingData.psychologist_id,
-        session_type: bookingData.session_type,
-        appointment_date: bookingData.appointment_date,
-        appointment_time: bookingData.appointment_time,
-        notes: bookingData.notes || '',
-        session_duration: this.getSessionDuration(bookingData.session_type)
-      });
-      return response;
+      return await response.json();
     } catch (error) {
-      console.error('Error creating booking:', error);
-      // Return success for demo purposes
-      return {
-        success: true,
-        message: 'Booking created successfully',
-        data: {
-          id: Math.random().toString(36).substr(2, 9),
-          ...bookingData,
-          status: 'pending',
-          created_at: new Date().toISOString()
+      console.error('Error fetching psychologists overview:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get bookings for a specific psychologist
+   * @param {string} psychologistId - Psychologist ID
+   */
+  getBookingsByPsychologist: async (psychologistId) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/admin/psychologist-bookings/${psychologistId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          }
         }
-      };
-    }
-  }
+      );
 
-  async updateBooking(bookingId, bookingData) {
-    try {
-      const response = await apiService.put(`/bookings/${bookingId}`, bookingData);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to update booking');
-    }
-  }
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch psychologist bookings');
+      }
 
-  async cancelBooking(bookingId, reason = '') {
-    try {
-      const response = await apiService.post(`/bookings/${bookingId}/cancel`, { reason });
-      return response;
-    } catch (error) {
-      throw new Error('Failed to cancel booking');
-    }
-  }
-
-  async confirmBooking(bookingId) {
-    try {
-      const response = await apiService.post(`/bookings/${bookingId}/confirm`);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to confirm booking');
-    }
-  }
-
-  async completeBooking(bookingId, notes = '') {
-    try {
-      const response = await apiService.post(`/bookings/${bookingId}/complete`, { notes });
-      return response;
-    } catch (error) {
-      throw new Error('Failed to complete booking');
-    }
-  }
-
-  async rescheduleBooking(bookingId, newDateTime) {
-    try {
-      const response = await apiService.post(`/bookings/${bookingId}/reschedule`, {
-        newDateTime
-      });
-      return response;
-    } catch (error) {
-      throw new Error('Failed to reschedule booking');
-    }
-  }
-
-  async getAvailableSlots(psychologistId, date) {
-    try {
-      const response = await apiService.get(`/bookings/available-slots?psychologistId=${psychologistId}&date=${date}`);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to fetch available slots');
-    }
-  }
-
-  async getMyBookings(status = 'all') {
-    try {
-      const params = new URLSearchParams();
-      if (status !== 'all') params.append('status', status);
-      
-      // According to API docs: GET /bookings/my-bookings
-      const response = await apiService.get(`/bookings/my-bookings?${params}`);
-      return response;
-    } catch (error) {
-      console.error('Error fetching my bookings:', error);
-      // Return demo data on error
-      return {
-        success: true,
-        data: this.getDemoBookings(),
-        isMockData: true
-      };
-    }
-  }
-
-  async getPsychologistBookings(status = 'all') {
-    try {
-      const params = new URLSearchParams();
-      if (status !== 'all') params.append('status', status);
-      
-      // According to API docs: GET /bookings/psychologist-bookings
-      const response = await apiService.get(`/bookings/psychologist-bookings?${params}`);
-      return response;
+      return await response.json();
     } catch (error) {
       console.error('Error fetching psychologist bookings:', error);
-      return {
-        success: true,
-        data: [],
-        isMockData: true
-      };
+      throw error;
     }
-  }
+  },
 
-  async getBookingsByCompany(companyId, status = 'all') {
+  /**
+   * Get all bookings across all psychologists
+   */
+  getAllBookings: async () => {
     try {
-      const params = new URLSearchParams();
-      if (status !== 'all') params.append('status', status);
-      
-      const response = await apiService.get(`/bookings/company/${companyId}?${params}`);
-      
-      // If API fails, return mock data filtered by company
-      if (!response.success) {
-        const mockData = mockDataService.getBookingsByCompany(companyId);
-        const filteredData = status === 'all' ? mockData : mockData.filter(b => b.status === status);
-        
-        return {
-          success: true,
-          data: filteredData,
-          isMockData: true
-        };
+      const response = await fetch(`${BASE_URL}/admin/all-bookings`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch all bookings');
       }
-      
-      return response;
-    } catch (error) {
-      console.error('Error fetching company bookings:', error);
-      
-      // Fallback to mock data
-      const mockData = mockDataService.getBookingsByCompany(companyId);
-      const filteredData = status === 'all' ? mockData : mockData.filter(b => b.status === status);
-      
-      return {
-        success: true,
-        data: filteredData,
-        isMockData: true
-      };
-    }
-  }
 
-  async getBookingStats(period = 'month', companyId = null) {
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching all bookings:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Reassign booking to a different psychologist
+   * @param {string} bookingId - Booking ID
+   * @param {string} newPsychologistId - New psychologist ID
+   */
+  reassignBooking: async (bookingId, newPsychologistId) => {
     try {
-      const params = new URLSearchParams();
-      params.append('period', period);
-      if (companyId) params.append('companyId', companyId);
-      
-      const response = await apiService.get(`/bookings/stats?${params}`);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to fetch booking statistics');
-    }
-  }
+      const response = await fetch(
+        `${BASE_URL}/admin/bookings/${bookingId}/reassign`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          },
+          body: JSON.stringify({ new_psychologist_id: newPsychologistId })
+        }
+      );
 
-  async sendBookingReminder(bookingId) {
-    try {
-      const response = await apiService.post(`/bookings/${bookingId}/reminder`);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to send booking reminder');
-    }
-  }
-
-  async addBookingNote(bookingId, note) {
-    try {
-      const response = await apiService.post(`/bookings/${bookingId}/notes`, { note });
-      return response;
-    } catch (error) {
-      throw new Error('Failed to add booking note');
-    }
-  }
-
-  async getBookingHistory(bookingId) {
-    try {
-      const response = await apiService.get(`/bookings/${bookingId}/history`);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to fetch booking history');
-    }
-  }
-
-  // Helper method for session duration calculation
-  getSessionDuration(sessionType) {
-    const durations = {
-      '30-minute': 30,
-      '45-minute': 45,
-      '60-minute': 60,
-      'emergency': 30,
-      'consultation': 45,
-      'therapy': 60
-    };
-    return durations[sessionType] || 45; // Default to 45 minutes
-  }
-
-  // Helper method for demo bookings
-  getDemoBookings() {
-    return [
-      {
-        id: 'booking_1',
-        psychologist_id: 'psych_1',
-        psychologist_name: 'Dr. Sarah Johnson',
-        session_type: '45-minute',
-        appointment_date: '2025-10-25',
-        appointment_time: '10:00',
-        status: 'confirmed',
-        notes: 'Anxiety consultation',
-        session_duration: 45,
-        cost: 150,
-        meeting_link: 'https://meet.example.com/session1'
-      },
-      {
-        id: 'booking_2',
-        psychologist_id: 'psych_2',
-        psychologist_name: 'Dr. Michael Chen',
-        session_type: '60-minute',
-        appointment_date: '2025-10-28',
-        appointment_time: '14:30',
-        status: 'pending',
-        notes: 'Follow-up session',
-        session_duration: 60,
-        cost: 200,
-        meeting_link: null
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to reassign booking');
       }
-    ];
-  }
-}
 
-export const bookingService = new BookingService();
-export default bookingService;
+      return await response.json();
+    } catch (error) {
+      console.error('Error reassigning booking:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Disable a psychologist (temporarily)
+   * @param {string} psychologistId - Psychologist ID
+   */
+  disablePsychologist: async (psychologistId) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/admin/psychologists/${psychologistId}/disable`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to disable psychologist');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error disabling psychologist:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Enable a previously disabled psychologist
+   * @param {string} psychologistId - Psychologist ID
+   */
+  enablePsychologist: async (psychologistId) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/admin/psychologists/${psychologistId}/enable`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to enable psychologist');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error enabling psychologist:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get availability status for a psychologist
+   * @param {string} psychologistId - Psychologist ID
+   */
+  getPsychologistStatus: async (psychologistId) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/admin/psychologists/${psychologistId}/status`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch psychologist status');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching psychologist status:', error);
+      throw error;
+    }
+  }
+};
+
+// ========== BOOKING SERVICE ==========
+export const bookingService = {
+  /**
+   * Get all bookings (alias for adminService)
+   */
+  getAllBookings: async () => {
+    return adminService.getAllBookings();
+  },
+
+  /**
+   * Get bookings for a specific psychologist
+   */
+  getBookingsByPsychologist: async (psychologistId) => {
+    return adminService.getBookingsByPsychologist(psychologistId);
+  },
+
+  /**
+   * Reassign booking
+   */
+  reassignBooking: async (bookingId, newPsychologistId) => {
+    return adminService.reassignBooking(bookingId, newPsychologistId);
+  },
+
+  /**
+   * Search bookings with filters
+   * @param {Object} filters - { psychologistId, clientId, status, startDate, endDate }
+   */
+  searchBookings: async (filters) => {
+    try {
+      const queryParams = new URLSearchParams();
+      Object.keys(filters).forEach(key => {
+        if (filters[key]) {
+          queryParams.append(key, filters[key]);
+        }
+      });
+
+      const response = await fetch(
+        `${BASE_URL}/bookings/search?${queryParams.toString()}`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to search bookings');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error searching bookings:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get booking details
+   * @param {string} bookingId - Booking ID
+   */
+  getBookingDetails: async (bookingId) => {
+    try {
+      const response = await fetch(`${BASE_URL}/bookings/${bookingId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch booking details');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching booking details:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update booking status
+   * @param {string} bookingId - Booking ID
+   * @param {string} status - New status (confirmed, cancelled, completed, etc)
+   */
+  updateBookingStatus: async (bookingId, status) => {
+    try {
+      const response = await fetch(`${BASE_URL}/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({ status })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update booking status');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating booking status:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Update booking details
+   * @param {string} bookingId - Booking ID
+   * @param {Object} updateData - Fields to update
+   */
+  updateBooking: async (bookingId, updateData) => {
+    try {
+      const response = await fetch(`${BASE_URL}/bookings/${bookingId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify(updateData)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update booking');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Cancel booking
+   * @param {string} bookingId - Booking ID
+   * @param {string} reason - Cancellation reason
+   */
+  cancelBooking: async (bookingId, reason) => {
+    try {
+      const response = await fetch(`${BASE_URL}/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({ 
+          status: 'cancelled',
+          cancellation_reason: reason
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to cancel booking');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error cancelling booking:', error);
+      throw error;
+    }
+  }
+};
+
+const services = { adminService, bookingService };
+export default services;

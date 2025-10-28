@@ -1,8 +1,16 @@
 // Configuration service for ThoughtPro B2B application
 class ConfigService {
   constructor() {
+    // Use the production API URL with /v1 endpoint
+    let baseUrl = process.env.REACT_APP_API_URL || 'https://thoughtprob2b.thoughthealer.org/api/v1';
+    
+    // Ensure base URL ends with /v1
+    if (!baseUrl.endsWith('/v1') && !baseUrl.endsWith('/v1/')) {
+      baseUrl = baseUrl.endsWith('/') ? baseUrl + 'v1' : baseUrl + '/v1';
+    }
+    
     this.config = {
-      apiBaseUrl: process.env.REACT_APP_API_URL || 'https://thoughtprob2b.thoughthealer.org/api',
+      apiBaseUrl: baseUrl,
       appName: process.env.REACT_APP_APP_NAME || 'ThoughtPro B2B',
       version: process.env.REACT_APP_VERSION || '1.0.0',
       environment: process.env.REACT_APP_ENV || 'development',

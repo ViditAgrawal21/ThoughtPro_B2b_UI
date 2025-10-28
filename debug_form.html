@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Form Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-group { margin: 15px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { padding: 8px; width: 300px; border: 1px solid #ccc; }
+        .plan-preview { background: #f0f9ff; padding: 15px; margin: 10px 0; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Form Test</h1>
+    <form>
+        <div class="form-group">
+            <label for="companyName">Company Name:</label>
+            <input type="text" id="companyName" name="companyName" placeholder="Enter company name">
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="company@example.com">
+        </div>
+        
+        <div class="form-group">
+            <label for="subscriptionPlan">Subscription Plan:</label>
+            <select id="subscriptionPlan" name="subscriptionPlan">
+                <option value="basic">Basic Plan - Up to 50 employees</option>
+                <option value="premium">Premium Plan - Up to 200 employees</option>
+                <option value="ultra">Ultra Plan - Up to 500 employees</option>
+                <option value="business">Business Plan - Up to 1000 employees</option>
+                <option value="enterprise">Enterprise Plan - Unlimited employees</option>
+            </select>
+        </div>
+        
+        <div class="plan-preview" id="planPreview">
+            <h3>Basic Plan Features</h3>
+            <ul>
+                <li>Up to 50 employees</li>
+                <li>Basic analytics and reports</li>
+                <li>Email support</li>
+                <li>Standard booking management</li>
+                <li>Basic wellness tracking</li>
+            </ul>
+        </div>
+    </form>
+    
+    <script>
+        document.getElementById('subscriptionPlan').addEventListener('change', function(e) {
+            const plans = {
+                basic: {
+                    label: 'Basic Plan Features',
+                    features: ['Up to 50 employees', 'Basic analytics and reports', 'Email support', 'Standard booking management', 'Basic wellness tracking']
+                },
+                premium: {
+                    label: 'Premium Plan Features',
+                    features: ['Up to 200 employees', 'Advanced analytics and custom reports', 'Priority email support', 'Enhanced booking management', 'Employee wellness tracking', 'Custom dashboard']
+                },
+                ultra: {
+                    label: 'Ultra Plan Features',
+                    features: ['Up to 500 employees', 'Premium analytics and insights', '24/7 phone and email support', 'Advanced integrations', 'Custom wellness programs', 'API access']
+                },
+                business: {
+                    label: 'Business Plan Features',
+                    features: ['Up to 1000 employees', 'Enterprise-grade analytics', 'Dedicated account manager', 'Custom integrations', 'Advanced security features', 'White-label options']
+                },
+                enterprise: {
+                    label: 'Enterprise Plan Features',
+                    features: ['Unlimited employees', 'Complete customization', '24/7 dedicated support', 'On-premise deployment option', 'Advanced compliance features', 'Custom development']
+                }
+            };
+            
+            const selectedPlan = plans[e.target.value];
+            if (selectedPlan) {
+                const previewDiv = document.getElementById('planPreview');
+                previewDiv.innerHTML = `
+                    <h3>${selectedPlan.label}</h3>
+                    <ul>
+                        ${selectedPlan.features.map(feature => `<li>${feature}</li>`).join('')}
+                    </ul>
+                `;
+            }
+        });
+        
+        console.log('Form test loaded successfully');
+    </script>
+</body>
+</html>

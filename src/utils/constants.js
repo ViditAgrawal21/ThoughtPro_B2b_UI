@@ -25,3 +25,18 @@ export const USER_ROLES = {
   CEO: 'CEO',
   CTO: 'CTO'
 };
+
+export const DEPARTMENTS = [
+  'Executive',
+  'Engineering', 
+  'Product',
+  'Design',
+  'Marketing',
+  'Sales',
+  'HR',
+  'Finance',
+  'Operations',
+  'Customer Support',
+  'Legal',
+  'Other'
+];

@@ -5,6 +5,7 @@ import { SettingsProvider } from './contexts/SettingsContext';
 import { useAuth } from './hooks/useAuth';
 import LoginPage from './components/Login/LoginPage';
 import AdminLoginPage from './components/Login/AdminLoginPage';
+import SuperAdminLoginPage from './components/Login/SuperAdminLoginPage';
 import CompanyLoginPage from './components/Login/CompanyLoginPage';
 import SetNewPassword from './components/Auth/SetNewPassword';
 import Dashboard from './components/Dashboard/Dashboard';
@@ -13,7 +14,8 @@ import AddEmployee from './components/Employee/AddEmployee';
 import EmployeeList from './components/Employee/EmployeeList';
 import CompanyManagement from './components/Admin/CompanyManagement';
 import PsychologistManagement from './components/Psychologist/PsychologistManagement';
-import PsychologistDirectory from './components/Company/PsychologistDirectory';
+import PsychologistAvailabilityPage from './components/Psychologist/PsychologistAvailabilityPage';
+
 import BookingList from './components/Booking/BookingList';
 import CompanyForgotPassword from './components/Auth/CompanyForgotPassword';
 import './App.css';
@@ -27,6 +29,10 @@ const PrivateRoute = ({ children, requiredRole = null }) => {
   
   // If a specific role is required, check user role
   if (requiredRole && userRole !== requiredRole) {
+    // Super admin can access admin routes
+    if (requiredRole === 'admin' && userRole === 'super_admin') {
+      return children;
+    }
     return <Navigate to="/dashboard" />;
   }
   
@@ -34,8 +40,8 @@ const PrivateRoute = ({ children, requiredRole = null }) => {
 };
 
 const PsychologistRouteComponent = () => {
-  const { userRole } = useAuth();
-  return userRole === 'admin' ? <PsychologistManagement /> : <PsychologistDirectory />;
+  // Only admins can access psychologists - companies should not reach here
+  return <PsychologistManagement />;
 };
 
 const AppRoutes = () => {
@@ -59,6 +65,32 @@ const AppRoutes = () => {
         } 
       />
       
+      {/* Admin root redirect */}
+      <Route 
+        path="/admin" 
+        element={
+          <Navigate to="/admin/dashboard" replace />
+        } 
+      />
+      
+      {/* Super Admin Login */}
+      <Route 
+        path="/super-admin/login" 
+        element={
+          isAuthenticated && userRole === 'super_admin' 
+            ? <Navigate to="/super-admin/dashboard" /> 
+            : <SuperAdminLoginPage />
+        } 
+      />
+      
+      {/* Super Admin root redirect */}
+      <Route 
+        path="/super-admin" 
+        element={
+          <Navigate to="/super-admin/dashboard" replace />
+        } 
+      />
+      
       {/* Company Login */}
       <Route 
         path="/company/login" 
@@ -68,6 +100,14 @@ const AppRoutes = () => {
               ? <Navigate to="/admin/dashboard" />
               : <Navigate to="/dashboard" />
             : <CompanyLoginPage />
+        } 
+      />
+      
+      {/* Company root redirect */}
+      <Route 
+        path="/company" 
+        element={
+          <Navigate to="/company/login" replace />
         } 
       />
 
@@ -88,6 +128,16 @@ const AppRoutes = () => {
         path="/admin/dashboard"
         element={
           <PrivateRoute requiredRole="admin">
+            <AdminDashboard />
+          </PrivateRoute>
+        }
+      />
+      
+      {/* Super Admin Dashboard - reuse AdminDashboard for now */}
+      <Route
+        path="/super-admin/dashboard"
+        element={
+          <PrivateRoute requiredRole="super_admin">
             <AdminDashboard />
           </PrivateRoute>
         }
@@ -154,6 +204,15 @@ const AppRoutes = () => {
         element={
           <PrivateRoute requiredRole="admin">
             <PsychologistManagement />
+          </PrivateRoute>
+        }
+      />
+      
+      <Route
+        path="/admin/psychologists/:psychologistId/availability"
+        element={
+          <PrivateRoute requiredRole="admin">
+            <PsychologistAvailabilityPage />
           </PrivateRoute>
         }
       />
@@ -238,7 +297,7 @@ const AppRoutes = () => {
       <Route
         path="/psychologists"
         element={
-          <PrivateRoute>
+          <PrivateRoute requiredRole="admin">
             <PsychologistRouteComponent />
           </PrivateRoute>
         }
@@ -246,7 +305,7 @@ const AppRoutes = () => {
       <Route
         path="/bookings"
         element={
-          <PrivateRoute>
+          <PrivateRoute requiredRole="admin">
             <BookingList />
           </PrivateRoute>
         }

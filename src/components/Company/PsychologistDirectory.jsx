@@ -34,94 +34,17 @@ const PsychologistDirectory = () => {
         setPsychologists(response.data.psychologists || response.data || []);
         setTotalPages(Math.ceil((response.data.total || response.data.length || 0) / 10));
       } else {
-        // Fallback to demo data if API fails
-        setPsychologists(getDemoPsychologists());
-        setTotalPages(1);
+        setPsychologists([]);
+        setTotalPages(0);
       }
     } catch (err) {
       console.error('Error fetching psychologists:', err);
-      // Use demo data on error
-      setPsychologists(getDemoPsychologists());
-      setTotalPages(1);
+      setPsychologists([]);
+      setTotalPages(0);
     } finally {
       setLoading(false);
     }
   }, [currentPage, searchQuery, filters]);
-
-  const getDemoPsychologists = () => [
-    {
-      id: '1',
-      firstName: 'Sarah',
-      lastName: 'Johnson',
-      email: 'sarah.johnson@thoughtpro.com',
-      phone: '+1-555-0123',
-      title: 'Clinical Psychologist',
-      specializations: ['CBT', 'Anxiety', 'Depression', 'Workplace Stress'],
-      location: 'Remote',
-      rating: 4.9,
-      reviewCount: 156,
-      experience: 8,
-      availability: 'available',
-      nextAvailable: 'Today 3:00 PM',
-      workingHours: '9 AM - 7 PM',
-      sessionRates: {
-        thirtyMin: 80,
-        fortyFiveMin: 120,
-        emergency: 200
-      },
-      totalSessions: 342,
-      thisWeekSessions: 12,
-      profileImage: null
-    },
-    {
-      id: '2',
-      firstName: 'Michael',
-      lastName: 'Chen',
-      email: 'michael.chen@thoughtpro.com',
-      phone: '+1-555-0124',
-      title: 'Licensed Therapist',
-      specializations: ['Family Therapy', 'Relationship Counseling', 'Trauma'],
-      location: 'Hybrid',
-      rating: 4.8,
-      reviewCount: 203,
-      experience: 12,
-      availability: 'busy',
-      nextAvailable: 'Tomorrow 10:00 AM',
-      workingHours: '8 AM - 6 PM',
-      sessionRates: {
-        thirtyMin: 75,
-        fortyFiveMin: 110,
-        emergency: 180
-      },
-      totalSessions: 567,
-      thisWeekSessions: 15,
-      profileImage: null
-    },
-    {
-      id: '3',
-      firstName: 'Emily',
-      lastName: 'Rodriguez',
-      email: 'emily.rodriguez@thoughtpro.com',
-      phone: '+1-555-0125',
-      title: 'Behavioral Therapist',
-      specializations: ['ADHD', 'Autism Spectrum', 'Behavioral Issues'],
-      location: 'In-Person',
-      rating: 4.7,
-      reviewCount: 89,
-      experience: 5,
-      availability: 'available',
-      nextAvailable: 'Today 4:30 PM',
-      workingHours: '10 AM - 8 PM',
-      sessionRates: {
-        thirtyMin: 85,
-        fortyFiveMin: 125,
-        emergency: 220
-      },
-      totalSessions: 178,
-      thisWeekSessions: 8,
-      profileImage: null
-    }
-  ];
 
   useEffect(() => {
     fetchPsychologists();

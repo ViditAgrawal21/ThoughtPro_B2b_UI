@@ -1,12 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Upload, Download, Plus, Trash2, AlertCircle, CheckCircle, X, FileText } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { employeeService } from '../../services/employeeService';
-import { useAuth } from '../../hooks/useAuth';
+import { getUserFriendlyErrorMessage } from '../../utils/errorUtils';
+import { convertExcelDate, isValidDateFormat, batchProcessDates } from '../../utils/dateUtils';
+import { DEPARTMENTS } from '../../utils/constants';
+import PhoneInput from '../Common/PhoneInput';
 import './BulkAddEmployee.css';
 
+// Debounce utility function for performance optimization
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const BulkAddEmployee = ({ onClose, onSuccess }) => {
-  const { user, isCompanyUser } = useAuth();
   const [employees, setEmployees] = useState([
     {
       firstName: '',
@@ -21,26 +40,22 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState([]);
   const [validationErrors, setValidationErrors] = useState({});
+  
+  // Memoize validation errors to prevent unnecessary re-renders
+  const memoizedValidationErrors = useMemo(() => validationErrors, [validationErrors]);
   const [uploadMode, setUploadMode] = useState('manual'); // 'manual', 'csv', or 'file'
   const [csvData, setCsvData] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [processingProgress, setProcessingProgress] = useState(0);
 
-  // Get company ID from user context
-  const companyId = isCompanyUser ? user?.companyId : null;
+  // Get company ID from localStorage (same as other components)
+  const getCompanyId = () => {
+    return localStorage.getItem('company_id') || localStorage.getItem('companyId');
+  };
 
-  const departments = [
-    'Engineering',
-    'Marketing',
-    'Sales',
-    'Human Resources',
-    'Finance',
-    'Operations',
-    'Customer Support',
-    'Product Management',
-    'Design',
-    'Legal'
-  ];
+  // Use departments from constants to match backend
+  const departments = DEPARTMENTS;
 
   const addEmployee = () => {
     setEmployees([
@@ -69,9 +84,12 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
     }
   };
 
-  const updateEmployee = (index, field, value) => {
+  const updateEmployee = useCallback((index, field, value) => {
+    // Handle date conversion for startDate field
+    const processedValue = field === 'startDate' ? convertExcelDate(value) : value;
+    
     const newEmployees = [...employees];
-    newEmployees[index] = { ...newEmployees[index], [field]: value };
+    newEmployees[index] = { ...newEmployees[index], [field]: processedValue };
     setEmployees(newEmployees);
 
     // Clear validation error for this field
@@ -83,9 +101,9 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
       }
       setValidationErrors(newValidationErrors);
     }
-  };
+  }, [employees, validationErrors]);
 
-  const validateEmployee = (employee, index) => {
+  const validateEmployee = useCallback((employee, index) => {
     const errors = {};
     
     if (!employee.firstName?.trim()) {
@@ -110,10 +128,21 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
       errors.position = 'Position is required';
     }
 
-    return errors;
-  };
+    if (employee.phone) {
+      const phoneDigits = employee.phone.replace(/\D/g, '');
+      if (phoneDigits.length !== 10) {
+        errors.phone = 'Phone number must be exactly 10 digits';
+      }
+    }
 
-  const validateAllEmployees = () => {
+    if (employee.startDate && !isValidDateFormat(employee.startDate)) {
+      errors.startDate = 'Start date must be in YYYY-MM-DD format';
+    }
+
+    return errors;
+  }, []);
+
+  const validateAllEmployees = useCallback(() => {
     const newValidationErrors = {};
     let hasErrors = false;
 
@@ -127,7 +156,7 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
 
     setValidationErrors(newValidationErrors);
     return !hasErrors;
-  };
+  }, [employees, validateEmployee]);
 
   const parseCsvData = () => {
     try {
@@ -156,7 +185,7 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
                 employee.lastName = values[index];
                 break;
               case 'startdate':
-                employee.startDate = values[index];
+                employee.startDate = convertExcelDate(values[index]);
                 break;
               default:
                 employee[header] = values[index];
@@ -312,7 +341,7 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
               case 'startdate':
               case 'dateofjoining':
               case 'joindate':
-                employee.startDate = value;
+                employee.startDate = convertExcelDate(value);
                 break;
               case 'phonenumber':
               case 'phone':
@@ -338,9 +367,12 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
         return false;
       }
 
-      setEmployees(parsedEmployees);
+      // Batch process dates for better performance
+      const processedEmployees = batchProcessDates(parsedEmployees);
+      
+      setEmployees(processedEmployees);
       setErrors([]);
-      setSuccessMessage(`Successfully parsed ${parsedEmployees.length} employees from file.`);
+      setSuccessMessage(`Successfully parsed ${processedEmployees.length} employees from file.`);
       return true;
     } catch (error) {
       setErrors(['Error parsing file data. Please check the file format.']);
@@ -348,9 +380,10 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     
+    const companyId = getCompanyId();
     if (!companyId) {
       setErrors(['Company ID not found. Please ensure you are logged in as a company user.']);
       return;
@@ -366,24 +399,47 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
     setSuccessMessage('');
 
     try {
-      const response = await employeeService.bulkCreateEmployees(companyId, employees);
+      // Process dates before submission to ensure correct format
+      const processedEmployees = batchProcessDates(employees);
+      
+      setSuccessMessage(`Processing ${processedEmployees.length} employees...`);
+      
+      // Process employees with progress updates
+      setProcessingProgress(10); // Initial progress
+      
+      const response = await employeeService.bulkCreateEmployees(
+        companyId, 
+        processedEmployees,
+        (progress) => setProcessingProgress(progress)
+      );
       
       if (response.success) {
-        setSuccessMessage(`Successfully created ${employees.length} employees!`);
+        const createdCount = response.data?.successful?.length || processedEmployees.length;
+        const failedCount = response.data?.failed?.length || 0;
+        
+        if (failedCount > 0) {
+          setSuccessMessage(`Successfully created ${createdCount} employees. ${failedCount} failed due to duplicates or validation errors.`);
+        } else {
+          setSuccessMessage(`Successfully created ${createdCount} employees!`);
+        }
+        
         setTimeout(() => {
           onSuccess && onSuccess(response.data);
           onClose && onClose();
         }, 2000);
       } else {
-        setErrors([response.message || 'Failed to create employees']);
+        const friendlyMessage = getUserFriendlyErrorMessage(response.message || 'Failed to create employees', 'bulk_create');
+        setErrors([friendlyMessage]);
       }
     } catch (error) {
       console.error('Bulk create employees error:', error);
-      setErrors([error.message || 'An error occurred while creating employees']);
+      const friendlyMessage = getUserFriendlyErrorMessage(error.message || error, 'bulk_create');
+      setErrors([friendlyMessage]);
     } finally {
       setLoading(false);
+      setProcessingProgress(0);
     }
-  };
+  }, [employees, validateAllEmployees, onSuccess, onClose]);
 
   return (
     <div className="bulk-add-overlay">
@@ -424,8 +480,9 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
             <div className="csv-section">
               <div className="csv-instructions">
                 <h3>CSV Upload Instructions</h3>
-                <p>Upload a CSV file with the following headers:</p>
+                <p>Upload a CSV file with the following headers (firstName and lastName will be combined into name):</p>
                 <code>firstName,lastName,email,phone,department,position,startDate</code>
+                <p><small>Note: Email will be used as personal email for login credentials</small></p>
                 <button className="download-template-btn" onClick={downloadTemplate}>
                   <Download size={16} />
                   Download Template
@@ -457,6 +514,7 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
                 <h3>File Upload Instructions</h3>
                 <p>Upload a CSV or Excel file (.csv, .xlsx, .xls) with the following headers:</p>
                 <code>firstName,lastName,email,phone,department,position,startDate</code>
+                <p><small>Note: firstName and lastName will be combined into full name, email will be used as personal email</small></p>
                 <div className="template-buttons">
                   <button 
                     type="button" 
@@ -617,10 +675,9 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
 
                       <div className="form-group">
                         <label>Phone</label>
-                        <input
-                          type="tel"
+                        <PhoneInput
                           value={employee.phone}
-                          onChange={(e) => updateEmployee(index, 'phone', e.target.value)}
+                          onChange={(value) => updateEmployee(index, 'phone', value)}
                           placeholder="Enter phone number"
                         />
                       </div>
@@ -662,13 +719,33 @@ const BulkAddEmployee = ({ onClose, onSuccess }) => {
                           type="date"
                           value={employee.startDate}
                           onChange={(e) => updateEmployee(index, 'startDate', e.target.value)}
+                          className={validationErrors[index]?.startDate ? 'error' : ''}
                         />
+                        {validationErrors[index]?.startDate && (
+                          <span className="field-error">{validationErrors[index].startDate}</span>
+                        )}
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
+
+            {/* Progress Bar */}
+            {loading && processingProgress > 0 && (
+              <div className="processing-progress">
+                <div className="progress-info">
+                  <span>Processing employees...</span>
+                  <span>{processingProgress}%</span>
+                </div>
+                <div className="progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${processingProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="bulk-add-actions">
               <button

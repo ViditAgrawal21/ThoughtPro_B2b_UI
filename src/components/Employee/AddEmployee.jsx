@@ -1,13 +1,20 @@
+//add employee 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { UserPlus, ArrowLeft, Save } from 'lucide-react';
 import Header from '../Header/Header';
+import { employeeService } from '../../services/employeeService';
+import { authService } from '../../services/authServices';
+import { getUserFriendlyErrorMessage } from '../../utils/errorUtils';
+import { DEPARTMENTS } from '../../utils/constants';
+import PhoneInput from '../Common/PhoneInput';
 import './AddEmployee.css';
 
 const AddEmployee = () => {
   const [employeeName, setEmployeeName] = useState('');
   const [email, setEmail] = useState('');
   const [department, setDepartment] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -27,6 +34,7 @@ const AddEmployee = () => {
         setEmployeeName(employee.name);
         setEmail(employee.email || '');
         setDepartment(employee.department || '');
+        setPhoneNumber(employee.phone || '');
         setIsEditing(true);
         setEditingId(employeeId);
       }
@@ -61,33 +69,69 @@ const AddEmployee = () => {
       return;
     }
 
+    // Phone validation - extract only the phone number digits (excluding country code)
+    let phoneDigits = phoneNumber.replace(/\D/g, ''); // Remove all non-digits
+    
+    // Remove country code if present (any code from 1-4 digits at the start)
+    // Common country codes: +1 (1 digit), +91 (2 digits), +971 (3 digits), etc.
+    if (phoneDigits.length > 10) {
+      // Try to identify and remove country code
+      // If the number is longer than 10 digits, assume the extra digits are the country code
+      phoneDigits = phoneDigits.slice(-10); // Take only the last 10 digits
+    }
+    
+    if (!phoneDigits || phoneDigits.length === 0) {
+      setError('Please enter phone number');
+      return;
+    }
+    
+    if (phoneDigits.length !== 10) {
+      setError(`Phone number must be exactly 10 digits (currently ${phoneDigits.length} digits)`);
+      return;
+    }
+
     setLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+      // Get company ID from local storage
+      const companyId = authService.getStoredCompanyId();
+      if (!companyId) {
+        setError('Company ID not found. Please login again.');
+        return;
+      }
+
+      const employeeData = {
+        name: employeeName.trim(),
+        personalEmail: email.trim(), // API expects "personalEmail", not "personal_email"
+        role: 'employee',
+        department: department.trim(),
+        position: department.trim(), // Use department as position for now
+        employee_id: `EMP${Date.now()}`, // Generate unique employee ID
+        phone: phoneNumber.replace(/\D/g, '') // Store only digits
+      };
       
       if (isEditing && editingId) {
-        // Update existing employee
+        // Update existing employee (fallback to localStorage for now)
+        const employees = JSON.parse(localStorage.getItem('employees') || '[]');
         const updatedEmployees = employees.map(emp => 
           emp.id === editingId 
-            ? { ...emp, name: employeeName.trim(), email: email.trim(), department: department.trim() }
+            ? { ...emp, name: employeeName.trim(), email: email.trim(), department: department.trim(), phone: phoneNumber.replace(/\D/g, '') }
             : emp
         );
         localStorage.setItem('employees', JSON.stringify(updatedEmployees));
       } else {
-        // Create new employee
-        const employeeData = {
-          id: Math.random().toString(36).substr(2, 9),
-          name: employeeName.trim(),
-          email: email.trim(),
-          department: department.trim(),
-          createdAt: new Date().toISOString()
-        };
-        employees.push(employeeData);
-        localStorage.setItem('employees', JSON.stringify(employees));
+        // Create new employee using API
+        try {
+          const result = await employeeService.createEmployeeForCompany(companyId, employeeData);
+          console.log('Employee created successfully:', result);
+        } catch (apiError) {
+          console.warn('API call failed:', apiError.message);
+          
+          // Use utility function to get user-friendly error message
+          const userFriendlyError = getUserFriendlyErrorMessage(apiError, 'employee');
+          setError(userFriendlyError);
+          return; // Don't proceed with success
+        }
       }
       
       setSuccess(true);
@@ -97,6 +141,7 @@ const AddEmployee = () => {
         setEmployeeName('');
         setEmail('');
         setDepartment('');
+        setPhoneNumber('');
       }
       
       // Redirect after success
@@ -105,6 +150,7 @@ const AddEmployee = () => {
       }, 1500);
       
     } catch (err) {
+      console.error('Employee creation error:', err);
       setError('Failed to create employee. Please try again.');
     } finally {
       setLoading(false);
@@ -168,6 +214,20 @@ const AddEmployee = () => {
               />
             </div>
 
+            {/* Phone Number Input */}
+            <div className="input-group">
+              <label className="label">Phone Number</label>
+              <PhoneInput
+                value={phoneNumber}
+                onChange={setPhoneNumber}
+                disabled={loading}
+                placeholder="Enter phone number"
+              />
+              {error && error.includes('phone') && (
+                <div className="field-error">{error}</div>
+              )}
+            </div>
+
             {/* Department Input */}
             <div className="input-group">
               <label className="label">Department</label>
@@ -178,24 +238,21 @@ const AddEmployee = () => {
                 disabled={loading}
               >
                 <option value="">Select Department</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Sales">Sales</option>
-                <option value="Human Resources">Human Resources</option>
-                <option value="Finance">Finance</option>
-                <option value="Operations">Operations</option>
-                <option value="Customer Support">Customer Support</option>
-                <option value="Product Management">Product Management</option>
+                {DEPARTMENTS.map(department => (
+                  <option key={department} value={department}>{department}</option>
+                ))}
               </select>
             </div>
 
-            {/* Error Message */}
-            {error && <div className="error-message">{error}</div>}
+            {/* General Error Message */}
+            {error && !error.includes('phone') && (
+              <div className="error-message">{error}</div>
+            )}
             
             {/* Success Message */}
             {success && (
               <div className="success-message">
-                Employee {isEditing ? 'updated' : 'created'} successfully! Redirecting to employee list...
+                Employee {isEditing ? 'updated' : 'created'} successfully! Redirecting to employee list
               </div>
             )}
 

@@ -1,240 +1,139 @@
 import { apiService } from './api';
-import { mockDataService } from './mockDataService';
 
 class CompanyService {
-  // Company Management Operations
-  
-  // Admin - Get all companies
-  async getAllCompanies(page = 1, limit = 10, search = '') {
+  // Create Company - Simple POST to API
+  async createCompany(companyData) {
     try {
-      const params = new URLSearchParams();
-      params.append('page', page);
-      params.append('limit', limit);
-      if (search) params.append('search', search);
+      console.log('Posting company data to API:', companyData);
       
-      const response = await apiService.get(`/companies-supabase?${params}`);
+      const response = await apiService.post('/companies', companyData);
       
-      if (response.success && response.data) {
+      console.log('API Response:', response);
+      
+      if (response && response.success && response.data) {
         return response.data;
       }
       
-      // Fallback to mock data
-      return mockDataService.getAllCompanies();
+      if (response && response.error) {
+        throw new Error(response.error);
+      }
+      
+      throw new Error('Failed to create company');
     } catch (error) {
-      console.warn('Companies API unavailable, using mock data:', error.message);
-      return mockDataService.getAllCompanies();
+      console.error('Company creation error:', error);
+      throw error;
     }
   }
 
+  // Get Company by ID
   async getCompanyById(companyId) {
     try {
       const response = await apiService.get(`/companies/${companyId}`);
       
-      if (response.success && response.data) {
+      if (response && response.success && response.data) {
         return response.data;
       }
       
-      // Fallback to mock data
-      return mockDataService.getCompanyById(companyId);
+      throw new Error('Failed to fetch company');
     } catch (error) {
-      console.warn('API unavailable, using mock data for company');
-      return mockDataService.getCompanyById(companyId);
+      console.error('Error fetching company:', error);
+      throw error;
     }
   }
 
-  async createCompany(companyData) {
+  // Get All Companies
+  async getAllCompanies() {
     try {
-      const response = await apiService.post('/companies-supabase', companyData);
+      const response = await apiService.get('/companies');
       
-      if (response.success && response.data) {
+      if (response && response.success && response.data) {
         return response.data;
       }
       
-      // Fallback to mock creation
-      return mockDataService.createCompany(companyData);
+      throw new Error('Failed to fetch companies');
     } catch (error) {
-      console.warn('API unavailable, using mock data for company creation');
-      return mockDataService.createCompany(companyData);
+      console.error('Error fetching companies:', error);
+      throw error;
     }
   }
 
+  // Update Company
   async updateCompany(companyId, companyData) {
     try {
       const response = await apiService.put(`/companies/${companyId}`, companyData);
       
-      if (response.success && response.data) {
+      if (response && response.success && response.data) {
         return response.data;
       }
       
-      // Fallback to mock update
-      return mockDataService.updateCompany(companyId, companyData);
+      throw new Error('Failed to update company');
     } catch (error) {
-      console.warn('API unavailable, using mock data for company update');
-      return mockDataService.updateCompany(companyId, companyData);
+      console.error('Error updating company:', error);
+      throw error;
     }
   }
 
+  // Delete Company
   async deleteCompany(companyId) {
     try {
       const response = await apiService.delete(`/companies/${companyId}`);
       
-      if (response.success) {
+      if (response && response.success) {
         return { success: true };
       }
       
-      // Fallback to mock deletion
-      return mockDataService.deleteCompany(companyId);
+      throw new Error('Failed to delete company');
     } catch (error) {
-      console.warn('API unavailable, using mock data for company deletion');
-      return mockDataService.deleteCompany(companyId);
+      console.error('Error deleting company:', error);
+      throw error;
     }
   }
 
-  async getCompanyEmployees(companyId, page = 1, limit = 10) {
-    try {
-      const params = new URLSearchParams();
-      params.append('page', page);
-      params.append('limit', limit);
-      
-      const response = await apiService.get(`/companies/${companyId}/employees?${params}`);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to fetch company employees');
-    }
-  }
-
-  // Create employee with email credentials
-  async createEmployeeWithCredentials(companyId, employeeData) {
-    try {
-      const response = await apiService.post(`/companies/${companyId}/employees`, employeeData);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to create employee with credentials');
-    }
-  }
-
-  // Resend employee credentials
-  async resendEmployeeCredentials(companyId, employeeId) {
-    try {
-      const response = await apiService.post(`/companies/${companyId}/employees/${employeeId}/resend-credentials`);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to resend employee credentials');
-    }
-  }
-
-  // Bulk create employees
-  async bulkCreateEmployees(companyId, employeesData) {
-    try {
-      const response = await apiService.post(`/companies/${companyId}/employees/bulk`, {
-        employees: employeesData
-      });
-      return response;
-    } catch (error) {
-      throw new Error('Failed to bulk create employees');
-    }
-  }
-
-  // Send password reset link to personal email
-  async sendPasswordResetToPersonalEmail(resetData) {
-    try {
-      const response = await apiService.post('/companies/forgot-password/personal-email', resetData);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to send password reset link');
-    }
-  }
-
-  // Get company subscription configuration
-  async getCompanySubscriptionConfig(companyId) {
-    try {
-      const response = await apiService.get(`/companies-supabase/${companyId}/subscription-config`);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to fetch company subscription configuration');
-    }
-  }
-
-  // Update company subscription configuration
-  async updateCompanySubscriptionConfig(companyId, configData) {
-    try {
-      const response = await apiService.put(`/companies-supabase/${companyId}/subscription-config`, configData);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to update company subscription configuration');
-    }
-  }
-
-  // Create company login credentials with temporary password
-  async createCompanyLogin(loginData) {
-    try {
-      const response = await apiService.post('/auth/supabase/create-credentials', {
-        email: loginData.email,
-        temporaryPassword: loginData.temporaryPassword,
-        companyId: loginData.companyId,
-        companyName: loginData.companyName,
-        role: 'company',
-        isFirstTimeLogin: true
-      });
-      return response;
-    } catch (error) {
-      throw new Error('Failed to create company login credentials');
-    }
-  }
-
-  // Create employee with temporary password
-  async createEmployeeWithTempPassword(employeeData) {
-    try {
-      const response = await apiService.post('/auth/supabase/create-employee-temp', {
-        name: employeeData.name,
-        personalEmail: employeeData.personalEmail,
-        companyId: employeeData.companyId,
-        role: employeeData.role || 'employee',
-        department: employeeData.department,
-        position: employeeData.position,
-        employee_id: employeeData.employee_id,
-        phone: employeeData.phone
-      });
-      return response;
-    } catch (error) {
-      throw new Error('Failed to create employee with temporary password');
-    }
-  }
-
-  // Get employees with credential status
-  async getEmployeesWithCredentialStatus(companyId) {
-    try {
-      const response = await apiService.get(`/auth/supabase/company/${companyId}/employees-status`);
-      return response;
-    } catch (error) {
-      throw new Error('Failed to get employees with credential status');
-    }
-  }
-
+  // Get Company Stats
   async getCompanyStats(companyId) {
     try {
       const response = await apiService.get(`/companies/${companyId}/stats`);
-      return response;
+      
+      if (response && response.success && response.data) {
+        return response.data;
+      }
+      
+      throw new Error('Failed to fetch company stats');
     } catch (error) {
-      throw new Error('Failed to fetch company statistics');
+      console.error('Error fetching stats:', error);
+      throw error;
     }
   }
 
+  // Get Company Subscription
   async getCompanySubscription(companyId) {
     try {
       const response = await apiService.get(`/companies/${companyId}/subscription`);
-      return response;
+      
+      if (response && response.success && response.data) {
+        return response.data;
+      }
+      
+      throw new Error('Failed to fetch subscription');
     } catch (error) {
-      throw new Error('Failed to fetch company subscription');
+      console.error('Error fetching subscription:', error);
+      throw error;
     }
   }
 
+  // Update Company Settings
   async updateCompanySettings(companyId, settings) {
     try {
       const response = await apiService.put(`/companies/${companyId}/settings`, settings);
-      return response;
+      
+      if (response && response.success && response.data) {
+        return response.data;
+      }
+      
+      throw new Error('Failed to update settings');
     } catch (error) {
-      throw new Error('Failed to update company settings');
+      console.error('Error updating settings:', error);
+      throw error;
     }
   }
 
@@ -243,15 +142,14 @@ class CompanyService {
     try {
       const response = await apiService.get(`/companies/${companyId}/users`);
       
-      if (response.success && response.data) {
+      if (response && response.success && response.data) {
         return response.data;
       }
       
-      // Fallback to mock data
-      return mockDataService.getCompanyUsers(companyId);
+      throw new Error('Failed to fetch company users');
     } catch (error) {
-      console.warn('API unavailable, using mock data for company users');
-      return mockDataService.getCompanyUsers(companyId);
+      console.error('Error fetching users:', error);
+      throw error;
     }
   }
 
@@ -259,15 +157,14 @@ class CompanyService {
     try {
       const response = await apiService.post(`/companies/${companyId}/users`, userData);
       
-      if (response.success && response.data) {
+      if (response && response.success && response.data) {
         return response.data;
       }
       
-      // Fallback to mock creation
-      return mockDataService.createCompanyUser(companyId, userData);
+      throw new Error('Failed to create user');
     } catch (error) {
-      console.warn('API unavailable, using mock data for company user creation');
-      return mockDataService.createCompanyUser(companyId, userData);
+      console.error('Error creating user:', error);
+      throw error;
     }
   }
 
@@ -275,15 +172,14 @@ class CompanyService {
     try {
       const response = await apiService.put(`/companies/${companyId}/users/${userId}`, userData);
       
-      if (response.success && response.data) {
+      if (response && response.success && response.data) {
         return response.data;
       }
       
-      // Fallback to mock update
-      return mockDataService.updateCompanyUser(companyId, userId, userData);
+      throw new Error('Failed to update user');
     } catch (error) {
-      console.warn('API unavailable, using mock data for company user update');
-      return mockDataService.updateCompanyUser(companyId, userId, userData);
+      console.error('Error updating user:', error);
+      throw error;
     }
   }
 
@@ -291,25 +187,63 @@ class CompanyService {
     try {
       const response = await apiService.delete(`/companies/${companyId}/users/${userId}`);
       
-      if (response.success) {
+      if (response && response.success) {
         return { success: true };
       }
       
-      // Fallback to mock deletion
-      return mockDataService.deleteCompanyUser(companyId, userId);
+      throw new Error('Failed to delete user');
     } catch (error) {
-      console.warn('API unavailable, using mock data for company user deletion');
-      return mockDataService.deleteCompanyUser(companyId, userId);
+      console.error('Error deleting user:', error);
+      throw error;
     }
   }
 
-  // Company Profile Management (for company users)
+  // Create Employee with Temporary Password
+  async createEmployeeWithTempPassword(employeeData) {
+    try {
+      const response = await apiService.post('/auth/supabase/create-employee', {
+        email: employeeData.email,
+        name: employeeData.name,
+        company_id: employeeData.company_id,
+        department: employeeData.department,
+        position: employeeData.position,
+        employee_id: employeeData.employee_id,
+        phone: employeeData.phone
+      });
+      
+      if (response && response.success && response.data) {
+        return response.data;
+      }
+      
+      throw new Error('Failed to create employee');
+    } catch (error) {
+      console.error('Error creating employee:', error);
+      throw error;
+    }
+  }
+
+  // Get Employees with Credential Status
+  async getEmployeesWithCredentialStatus(companyId) {
+    try {
+      const response = await apiService.get(`/auth/supabase/company/${companyId}/employees-status`);
+      
+      if (response && response.success && response.data) {
+        return response.data;
+      }
+      
+      throw new Error('Failed to get employee status');
+    } catch (error) {
+      console.error('Error fetching employee status:', error);
+      throw error;
+    }
+  }
+
+  // Company Profile Management
   async getMyCompanyProfile() {
     const companyId = this.getCurrentCompanyId();
     if (!companyId) {
       throw new Error('No company ID found');
     }
-    
     return this.getCompanyById(companyId);
   }
 
@@ -318,36 +252,159 @@ class CompanyService {
     if (!companyId) {
       throw new Error('No company ID found');
     }
-    
     return this.updateCompany(companyId, companyData);
   }
 
-  // Utility methods
+  // Utility Methods
   getCurrentCompanyId() {
+    const companyId = localStorage.getItem('company_id');
+    if (companyId) return companyId;
+    
     const userProfile = localStorage.getItem('userProfile');
     if (userProfile) {
-      const profile = JSON.parse(userProfile);
-      return profile.company_id;
+      try {
+        const profile = JSON.parse(userProfile);
+        return profile.company_id;
+      } catch (error) {
+        return null;
+      }
     }
     return null;
+  }
+
+  storeCompanyId(companyId) {
+    localStorage.setItem('company_id', companyId);
+  }
+
+  clearCompanyId() {
+    localStorage.removeItem('company_id');
   }
 
   isAdmin() {
     const userProfile = localStorage.getItem('userProfile');
     if (userProfile) {
-      const profile = JSON.parse(userProfile);
-      return profile.role === 'admin';
+      try {
+        const profile = JSON.parse(userProfile);
+        return profile.role === 'admin';
+      } catch (error) {
+        return false;
+      }
     }
     return false;
   }
 
   canManageCompany(companyId) {
-    if (this.isAdmin()) {
-      return true; // Admin can manage all companies
-    }
-    
+    if (this.isAdmin()) return true;
     const currentCompanyId = this.getCurrentCompanyId();
-    return currentCompanyId === companyId; // Company users can only manage their own company
+    return currentCompanyId === companyId;
+  }
+
+  // ==================== ADMIN-SPECIFIC ENDPOINTS ====================
+
+  /**
+   * Get all companies for admin dashboard
+   * GET /admin/companies
+   */
+  async getAllCompaniesAdmin() {
+    try {
+      const response = await apiService.get('/admin/companies');
+      
+      if (response && response.success && response.data) {
+        return response.data;
+      }
+      
+      throw new Error('Failed to fetch companies');
+    } catch (error) {
+      console.error('Error fetching admin companies:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a company (admin only)
+   * DELETE /admin/companies/{companyId}
+   */
+  async deleteCompanyAdmin(companyId) {
+    try {
+      const response = await apiService.delete(`/admin/companies/${companyId}`);
+      
+      if (response && response.success) {
+        return { success: true };
+      }
+      
+      throw new Error('Failed to delete company');
+    } catch (error) {
+      console.error('Error deleting company (admin):', error);
+      throw error;
+    }
+  }
+
+  // ==================== SUBSCRIPTION CONFIG ENDPOINTS ====================
+
+  /**
+   * Get company subscription configuration
+   * GET /companies/{companyId}/subscription-config
+   */
+  async getSubscriptionConfig(companyId) {
+    try {
+      const response = await apiService.get(`/companies/${companyId}/subscription-config`);
+      
+      if (response && response.success && response.data) {
+        return response.data;
+      }
+      
+      // If no subscription config exists yet (404), return null
+      if (response && response.status === 404) {
+        return null;
+      }
+      
+      throw new Error('Failed to fetch subscription configuration');
+    } catch (error) {
+      // Return null if subscription config doesn't exist yet
+      if (error.response && error.response.status === 404) {
+        return null;
+      }
+      console.error('Error fetching subscription config:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update company subscription configuration
+   * PUT /companies/{companyId}/subscription-config
+   */
+  async updateSubscriptionConfig(companyId, configData) {
+    try {
+      const response = await apiService.put(`/companies/${companyId}/subscription-config`, configData);
+      
+      if (response && response.success && response.data) {
+        return response.data;
+      }
+      
+      throw new Error('Failed to update subscription configuration');
+    } catch (error) {
+      console.error('Error updating subscription config:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create company subscription configuration
+   * POST /companies/{companyId}/subscription-config
+   */
+  async createSubscriptionConfig(companyId, configData) {
+    try {
+      const response = await apiService.post(`/companies/${companyId}/subscription-config`, configData);
+      
+      if (response && response.success && response.data) {
+        return response.data;
+      }
+      
+      throw new Error('Failed to create subscription configuration');
+    } catch (error) {
+      console.error('Error creating subscription config:', error);
+      throw error;
+    }
   }
 }
 

@@ -29,11 +29,29 @@ class ApiService {
   }
 
   getHeaders() {
-    const token = localStorage.getItem('token');
-    return {
+    // Check multiple possible token storage keys for compatibility
+    const token = localStorage.getItem('token') || 
+                 localStorage.getItem('authToken') || 
+                 localStorage.getItem('jwt_token');
+    
+    const headers = {
       'Content-Type': 'application/json',
       ...(token && { 'Authorization': `Bearer ${token}` })
     };
+    
+    // Development debug log for auth issues
+    if (process.env.NODE_ENV === 'development') {
+      console.log('API Headers:', { 
+        hasToken: !!token, 
+        tokenLength: token?.length || 0,
+        tokenSource: token ? (
+          localStorage.getItem('token') ? 'token' :
+          localStorage.getItem('authToken') ? 'authToken' : 'jwt_token'
+        ) : 'none'
+      });
+    }
+    
+    return headers;
   }
 
   async request(endpoint, options = {}) {
@@ -42,7 +60,11 @@ class ApiService {
       throw new Error('API is disabled or in offline mode');
     }
     
-    const url = `${this.baseURL}${endpoint}`;
+    // Safely join base URL and endpoint to avoid double slashes
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const cleanBaseURL = this.baseURL.endsWith('/') ? this.baseURL.slice(0, -1) : this.baseURL;
+    const url = `${cleanBaseURL}${cleanEndpoint}`;
+    
     const config = {
       ...options,
       headers: {
@@ -63,6 +85,7 @@ class ApiService {
       }
       
       console.error('API request failed:', formattedError);
+      // Re-throw the original error to preserve stack trace and details
       throw error;
     }
   }

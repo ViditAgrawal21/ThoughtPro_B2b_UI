@@ -1,254 +1,164 @@
 import { apiService } from './api';
-import { mockDataService } from './mockDataService';
 
 class DashboardService {
-  constructor() {
-    // Check environment variables for mock mode
-    const mockMode = process.env.REACT_APP_MOCK_MODE === 'true';
-    const offlineMode = process.env.REACT_APP_OFFLINE_MODE === 'true';
-    
-    this.useApiFirst = !mockMode && !offlineMode; // Try API first only if not in mock mode
-    this.consecutiveFailures = 0;
-    this.maxFailures = 3; // Switch to mock mode after 3 failures
-    
-    if (mockMode) {
-      console.log('Dashboard Service: Starting in mock data mode (REACT_APP_MOCK_MODE=true)');
-    }
-    if (offlineMode) {
-      console.log('Dashboard Service: Starting in offline mode (REACT_APP_OFFLINE_MODE=true)');
-    }
-  }
-  
-  handleApiError(error, mockFallback) {
-    this.consecutiveFailures++;
-    
-    // Log the error but don't spam console
-    if (this.consecutiveFailures <= 2) {
-      console.warn('API unavailable, using mock data:', error.message);
-    } else if (this.consecutiveFailures === 3) {
-      console.warn('Multiple API failures detected, switching to mock data mode');
-      this.useApiFirst = false; // Switch to mock-first mode
-    }
-    
-    return mockFallback;
-  }
-  
-  handleApiSuccess() {
-    // Reset failure counter on successful API call
-    if (this.consecutiveFailures > 0) {
-      console.log('API connection restored');
-      this.consecutiveFailures = 0;
-      this.useApiFirst = true;
-    }
-  }
-
   // Executive Dashboard Operations
   
   async getDashboardData(companyId = null) {
-    // If not trying API first, return mock data immediately
-    if (!this.useApiFirst) {
-      return mockDataService.getDashboardData();
-    }
-    
     try {
       const params = new URLSearchParams();
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/executive-metrics?${params}`, false);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getDashboardData());
+      console.error('Failed to fetch dashboard data:', error.message);
+      throw new Error('Failed to fetch dashboard data');
     }
   }
 
   async getProductivityMetrics(timeRange = 'week', companyId = null) {
-    if (!this.useApiFirst) {
-      return mockDataService.getProductivityMetrics(timeRange, companyId);
-    }
-    
     try {
       const params = new URLSearchParams();
       params.append('range', timeRange);
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/productivity?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getProductivityMetrics(timeRange, companyId));
+      console.error('Failed to fetch productivity metrics:', error.message);
+      throw new Error('Failed to fetch productivity metrics');
     }
   }
 
   async getPhoneUsageMetrics(timeRange = 'week', companyId = null) {
-    if (!this.useApiFirst) {
-      return mockDataService.getPhoneUsageMetrics(timeRange, companyId);
-    }
-    
     try {
       const params = new URLSearchParams();
       params.append('range', timeRange);
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/phone-usage?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getPhoneUsageMetrics(timeRange, companyId));
+      console.error('Failed to fetch phone usage metrics:', error.message);
+      throw new Error('Failed to fetch phone usage metrics');
     }
   }
 
   async getApplicationsData(companyId = null) {
-    if (!this.useApiFirst) {
-      return mockDataService.getApplicationsData(companyId);
-    }
-    
     try {
       const params = new URLSearchParams();
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/applications?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getApplicationsData(companyId));
+      console.error('Failed to fetch applications data:', error.message);
+      throw new Error('Failed to fetch applications data');
     }
   }
 
   async getExecutiveOverview(companyId = null) {
-    if (!this.useApiFirst) {
-      return mockDataService.getExecutiveOverview(companyId);
-    }
-    
     try {
       const params = new URLSearchParams();
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/executive-overview?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getExecutiveOverview(companyId));
+      console.error('Failed to fetch executive overview:', error.message);
+      throw new Error('Failed to fetch executive overview');
     }
   }
 
   async getEmployeeMetrics(companyId = null) {
-    if (!this.useApiFirst) {
-      return mockDataService.getEmployeeMetrics(companyId);
-    }
-    
     try {
       const params = new URLSearchParams();
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/employee-metrics?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getEmployeeMetrics(companyId));
+      console.error('Failed to fetch employee metrics:', error.message);
+      throw new Error('Failed to fetch employee metrics');
     }
   }
 
   async getProductivityInsights(employeeId = null, dateRange = 'week') {
-    if (!this.useApiFirst) {
-      return mockDataService.getProductivityInsights(employeeId, dateRange);
-    }
-    
     try {
       const params = new URLSearchParams();
       if (employeeId) params.append('employee_id', employeeId);
       params.append('range', dateRange);
       
       const response = await apiService.get(`/dashboard/productivity-insights?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getProductivityInsights(employeeId, dateRange));
+      console.error('Failed to fetch productivity insights:', error.message);
+      throw new Error('Failed to fetch productivity insights');
     }
   }
 
   async getCompanyDashboard(companyId) {
-    if (!this.useApiFirst) {
-      return mockDataService.getCompanyDashboard(companyId);
-    }
-    
     try {
       const response = await apiService.get(`/dashboard/company/${companyId}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getCompanyDashboard(companyId));
+      console.error('Failed to fetch company dashboard:', error.message);
+      throw new Error('Failed to fetch company dashboard');
     }
   }
 
   async getWellnessMetrics(companyId = null, period = 'month') {
-    if (!this.useApiFirst) {
-      return mockDataService.getWellnessMetrics(companyId, period);
-    }
-    
     try {
       const params = new URLSearchParams();
       params.append('period', period);
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/wellness?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getWellnessMetrics(companyId, period));
+      console.error('Failed to fetch wellness metrics:', error.message);
+      throw new Error('Failed to fetch wellness metrics');
     }
   }
 
   async getBookingAnalytics(companyId = null, period = 'month') {
-    if (!this.useApiFirst) {
-      return mockDataService.getBookingAnalytics(companyId, period);
-    }
-    
     try {
       const params = new URLSearchParams();
       params.append('period', period);
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/booking-analytics?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getBookingAnalytics(companyId, period));
+      console.error('Failed to fetch booking analytics:', error.message);
+      throw new Error('Failed to fetch booking analytics');
     }
   }
 
   async getSubscriptionAnalytics(companyId = null, period = 'month') {
-    if (!this.useApiFirst) {
-      return mockDataService.getSubscriptionAnalytics(companyId, period);
-    }
-    
     try {
       const params = new URLSearchParams();
       params.append('period', period);
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/subscription-analytics?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getSubscriptionAnalytics(companyId, period));
+      console.error('Failed to fetch subscription analytics:', error.message);
+      throw new Error('Failed to fetch subscription analytics');
     }
   }
 
   async getRealtimeStats(companyId = null) {
-    if (!this.useApiFirst) {
-      return mockDataService.getRealtimeStats(companyId);
-    }
-    
     try {
       const params = new URLSearchParams();
       if (companyId) params.append('companyId', companyId);
       
       const response = await apiService.get(`/dashboard/realtime?${params}`);
-      this.handleApiSuccess();
       return response;
     } catch (error) {
-      return this.handleApiError(error, mockDataService.getRealtimeStats(companyId));
+      console.error('Failed to fetch realtime stats:', error.message);
+      throw new Error('Failed to fetch realtime stats');
     }
   }
 

@@ -11,6 +11,8 @@ export { subscriptionService } from './subscriptionService';
 export { dashboardService } from './dashboardService';
 export { healthCheckService } from './healthCheckService';
 export { configService } from './configService';
+export { mockDataService } from './mockDataService';
+export { holidayService } from './holidayService';
 
 // Service collection for easy access
 export const services = {
@@ -23,7 +25,8 @@ export const services = {
   subscription: () => import('./subscriptionService').then(m => m.subscriptionService),
   dashboard: () => import('./dashboardService').then(m => m.dashboardService),
   health: () => import('./healthCheckService').then(m => m.healthCheckService),
-  config: () => import('./configService').then(m => m.configService)
+  config: () => import('./configService').then(m => m.configService),
+  mockData: () => import('./mockDataService').then(m => m.mockDataService)
 };
 
 // Service initialization helper
@@ -40,7 +43,8 @@ export const initializeServices = () => {
     'Subscription Service',
     'Dashboard Service',
     'Health Check Service',
-    'Configuration Service'
+    'Configuration Service',
+    'Mock Data Service'
   ];
   
   serviceList.forEach((service, index) => {

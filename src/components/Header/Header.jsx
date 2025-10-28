@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, LogOut, UserPlus, Users, Building2, UserCheck, Calendar, Menu, X, Settings, Brain } from 'lucide-react';
+import { Home, LogOut, UserPlus, Users, Building2, Calendar, Menu, X, Settings, Brain } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useSettings } from '../../hooks/useSettings';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -67,16 +67,6 @@ const Header = () => {
           path: '/employees',
           icon: Users,
           label: 'Employees'
-        },
-        {
-          path: '/psychologists',
-          icon: UserCheck,
-          label: 'Psychologists'
-        },
-        {
-          path: '/bookings',
-          icon: Calendar,
-          label: 'Bookings'
         }
       ];
     }

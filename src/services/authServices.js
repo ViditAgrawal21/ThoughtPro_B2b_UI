@@ -33,37 +33,240 @@ class AuthService {
 
   // Authentication and Authorization Operations
   
-  // Admin Login Flow using Supabase
+  // Admin Login Flow using dedicated admin endpoint
   async adminLogin(email, password) {
     try {
-      const response = await apiService.post('/auth/supabase/login', {
+      console.log('AdminLogin: Attempting admin login for:', email);
+      
+      // Use the dedicated admin login endpoint
+      const response = await apiService.post('/auth/admin-login', {
         email,
-        password,
-        role: 'admin'
+        password
       });
       
-      // Store token and user data if login successful
-      if (response.success && response.data) {
-        if (response.data.token) {
-          localStorage.setItem('token', response.data.token);
-        }
-        if (response.data.user) {
-          localStorage.setItem('user', JSON.stringify({
-            ...response.data.user,
-            role: 'admin'
-          }));
-        }
-        // Store admin profile
+      console.log('AdminLogin: API response:', response);
+      
+      // Handle successful login - API returns data directly in response
+      if (response.success && response.token && response.user) {
+        const userData = response.user;
+        
+        console.log('AdminLogin: Login successful, storing data...');
+        
+        // Store JWT token
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('jwt_token', response.token);
+        console.log('AdminLogin: Token stored');
+        
+        // Store user data with admin role
+        const adminUserData = {
+          id: userData.id,
+          email: userData.email || email,
+          name: userData.name || 'System Administrator',
+          role: 'admin',
+          is_active: true,
+          permissions: ['*']
+        };
+        
+        localStorage.setItem('user', JSON.stringify(adminUserData));
+        console.log('AdminLogin: Admin user stored:', adminUserData);
+        
+        // Store admin profile with full permissions
         localStorage.setItem('userProfile', JSON.stringify({
           role: 'admin',
-          email: response.data.user?.email || email,
-          permissions: ['*'] // Admin has all permissions
+          email: userData.email || email,
+          name: userData.name || 'System Administrator',
+          permissions: ['*'], // Admin has all permissions
+          isAdmin: true
         }));
+        
+        console.log('AdminLogin: Admin profile stored');
+        return response;
       }
       
-      return response;
+      // Handle case where response structure is different
+      if (response.success && response.data) {
+        const userData = response.data.user || response.data;
+        
+        if (response.data.token || response.token) {
+          const token = response.data.token || response.token;
+          localStorage.setItem('token', token);
+          localStorage.setItem('authToken', token);
+          localStorage.setItem('jwt_token', token);
+        }
+        
+        const adminUserData = {
+          id: userData.id,
+          email: userData.email || email,
+          name: userData.name || 'System Administrator',
+          role: 'admin',
+          is_active: true,
+          permissions: ['*']
+        };
+        
+        localStorage.setItem('user', JSON.stringify(adminUserData));
+        localStorage.setItem('userProfile', JSON.stringify({
+          role: 'admin',
+          email: userData.email || email,
+          name: userData.name || 'System Administrator',
+          permissions: ['*'],
+          isAdmin: true
+        }));
+        
+        return {
+          success: true,
+          token: response.data.token || response.token,
+          user: adminUserData
+        };
+      }
+      
+      console.log('AdminLogin: Login failed - invalid response format');
+      return {
+        success: false,
+        error: 'Invalid admin credentials'
+      };
+      
     } catch (error) {
-      throw new Error('Admin authentication failed');
+      console.error('AdminLogin: Error occurred:', error);
+      
+      // Provide specific error messages based on response
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data?.message || error.message;
+        
+        if (status === 401) {
+          throw new Error('Invalid admin credentials. Please check your email and password.');
+        } else if (status === 403) {
+          throw new Error('Access denied. This account does not have admin privileges.');
+        } else if (status >= 500) {
+          throw new Error('Server error. Please try again later.');
+        } else {
+          throw new Error(message || 'Admin authentication failed');
+        }
+      } else if (error.code === 'NETWORK_ERROR' || error.message.includes('fetch')) {
+        throw new Error('Network error. Please check your internet connection.');
+      } else {
+        throw new Error(error.message || 'Admin authentication failed');
+      }
+    }
+  }
+
+  // Super Admin Login Flow using dedicated super admin endpoint
+  async superAdminLogin(email, password) {
+    try {
+      console.log('SuperAdminLogin: Attempting super admin login for:', email);
+      
+      // Use the dedicated super admin login endpoint
+      const response = await apiService.post('/auth/super-admin-login', {
+        email,
+        password
+      });
+      
+      console.log('SuperAdminLogin: API response:', response);
+      
+      // Handle successful login
+      if (response.success && response.token && response.user) {
+        const userData = response.user;
+        
+        console.log('SuperAdminLogin: Login successful, storing data...');
+        
+        // Store JWT token
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('jwt_token', response.token);
+        console.log('SuperAdminLogin: Token stored');
+        
+        // Store user data with super admin role
+        const superAdminUserData = {
+          id: userData.id,
+          email: userData.email || email,
+          name: userData.name || 'Super Administrator',
+          role: 'super_admin',
+          is_active: true,
+          permissions: ['*'] // Super admin has all permissions
+        };
+        
+        localStorage.setItem('user', JSON.stringify(superAdminUserData));
+        console.log('SuperAdminLogin: Super admin user stored:', superAdminUserData);
+        
+        // Store super admin profile
+        localStorage.setItem('userProfile', JSON.stringify({
+          role: 'super_admin',
+          email: userData.email || email,
+          name: userData.name || 'Super Administrator',
+          permissions: ['*'],
+          isSuperAdmin: true
+        }));
+        
+        console.log('SuperAdminLogin: Super admin profile stored');
+        return response;
+      }
+      
+      // Handle case where response structure is different
+      if (response.success && response.data) {
+        const userData = response.data.user || response.data;
+        
+        if (response.data.token || response.token) {
+          const token = response.data.token || response.token;
+          localStorage.setItem('token', token);
+          localStorage.setItem('authToken', token);
+          localStorage.setItem('jwt_token', token);
+        }
+        
+        const superAdminUserData = {
+          id: userData.id,
+          email: userData.email || email,
+          name: userData.name || 'Super Administrator',
+          role: 'super_admin',
+          is_active: true,
+          permissions: ['*']
+        };
+        
+        localStorage.setItem('user', JSON.stringify(superAdminUserData));
+        localStorage.setItem('userProfile', JSON.stringify({
+          role: 'super_admin',
+          email: userData.email || email,
+          name: userData.name || 'Super Administrator',
+          permissions: ['*'],
+          isSuperAdmin: true
+        }));
+        
+        return {
+          success: true,
+          token: response.data.token || response.token,
+          user: superAdminUserData
+        };
+      }
+      
+      console.log('SuperAdminLogin: Login failed - invalid response format');
+      return {
+        success: false,
+        error: 'Invalid super admin credentials'
+      };
+      
+    } catch (error) {
+      console.error('SuperAdminLogin: Error occurred:', error);
+      
+      // Handle specific errors
+      if (error.message && (
+        error.message.includes('Invalid credentials') || 
+        error.message.includes('401') ||
+        error.message.includes('Unauthorized')
+      )) {
+        throw new Error('Invalid super admin email or password. Please check your credentials.');
+      } else if (error.message && (
+        error.message.includes('403') || 
+        error.message.includes('Access denied') ||
+        error.message.includes('not authorized')
+      )) {
+        throw new Error('This account does not have super admin privileges.');
+      } else if (error.message && error.message.includes('500')) {
+        throw new Error('Server error. Please try again later.');
+      } else if (error.code === 'NETWORK_ERROR' || error.message.includes('fetch')) {
+        throw new Error('Network error. Please check your internet connection.');
+      } else {
+        throw new Error(error.message || 'Super admin authentication failed');
+      }
     }
   }
 
@@ -75,42 +278,61 @@ class AuthService {
         password
       });
       
+      console.log('Raw API Response:', response);
+      
       // Store token and user data if login successful
-      if (response.success && response.data) {
-        const userData = response.data.user || response.data;
+      if (response.success && response.token && response.user) {
+        // The response IS the data - no need to access response.data
+        const userData = response.user;
         
-        if (response.data.token) {
-          localStorage.setItem('token', response.data.token);
+        console.log('Login response:', response);
+        console.log('User data:', userData);
+        
+        // Store JWT token
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('authToken', response.token);
+          localStorage.setItem('jwt_token', response.token);
+          console.log('Token stored:', response.token.substring(0, 20) + '...');
         }
         
-        // Store user data - could be company user or employee
-        localStorage.setItem('user', JSON.stringify({
+        // Store company ID from user data
+        if (userData.company) {
+          localStorage.setItem('company_id', userData.company);
+          localStorage.setItem('companyId', userData.company);
+          console.log('Company ID stored:', userData.company);
+        }
+        
+        // Store user data with proper structure
+        const userToStore = {
           id: userData.id,
-          email: email,
+          email: userData.email || email,
           name: userData.name,
           role: userData.role || 'company',
-          company_id: userData.company_id,
+          company_id: userData.company,
           phone: userData.phone,
-          plan_type: userData.plan_type,
-          isPremium: userData.isPremium,
-          isUltra: userData.isUltra,
-          isBusiness: userData.isBusiness,
-          expiry_date: userData.expiry_date,
-          is_active: userData.is_active
-        }));
+          plan_type: userData.planType,
+          validityDays: userData.validityDays,
+          productId: userData.productId,
+          isFirstLogin: userData.isFirstLogin,
+          requiresPasswordChange: userData.requiresPasswordChange,
+          is_active: true
+        };
+        
+        localStorage.setItem('user', JSON.stringify(userToStore));
+        console.log('User stored:', userToStore);
         
         // Store user profile for permissions
         localStorage.setItem('userProfile', JSON.stringify({
           role: userData.role || 'company',
-          company_id: userData.company_id,
-          email: email,
+          company_id: userData.company,
+          email: userData.email || email,
           name: userData.name,
           permissions: userData.role === 'admin' ? ['*'] : [
             'view_employees',
-            'manage_employees', 
-            'view_bookings',
-            'manage_bookings',
-            'view_psychologists'
+            'manage_employees',
+            'create_employees',
+            'manage_subscriptions'
           ]
         }));
       }
@@ -232,10 +454,7 @@ class AuthService {
           name: userData.name,
           permissions: userData.role === 'admin' ? ['*'] : [
             'view_employees',
-            'manage_employees', 
-            'view_bookings',
-            'manage_bookings',
-            'view_psychologists'
+            'manage_employees'
           ]
         }));
       }
@@ -260,6 +479,8 @@ class AuthService {
 
   clearUserData() {
     localStorage.removeItem('token');
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('company_id');
     localStorage.removeItem('user');
     localStorage.removeItem('userProfile');
   }
@@ -301,11 +522,14 @@ class AuthService {
   async forgotPasswordCompany(personalEmail) {
     try {
       const response = await apiService.post('/companies/forgot-password/personal-email', {
-        personalEmail
+        email: personalEmail
       });
       return response;
     } catch (error) {
-      throw new Error(error.response?.data?.message || 'Failed to send password reset email');
+      console.error('Forgot password error details:', error);
+      // Preserve original error message from API if it's an ApiError
+      const errorMessage = error.message || error.response?.data?.message || 'Failed to send password reset email';
+      throw new Error(errorMessage);
     }
   }
 
@@ -435,6 +659,17 @@ class AuthService {
     return localStorage.getItem('token');
   }
 
+  getJwtToken() {
+    return localStorage.getItem('jwt_token');
+  }
+
+  getStoredCompanyId() {
+    // Try multiple possible keys for company ID
+    return localStorage.getItem('company_id') || 
+           localStorage.getItem('companyId') || 
+           this.getCompanyId();
+  }
+
   isAuthenticated() {
     return !!this.getToken();
   }
@@ -511,10 +746,7 @@ class AuthService {
       admin: ['*'], // Admin has all permissions
       company: [
         'view_employees',
-        'manage_employees', 
-        'view_bookings',
-        'manage_bookings',
-        'view_psychologists'
+        'manage_employees'
       ],
       employee: [
         'view_own_profile',

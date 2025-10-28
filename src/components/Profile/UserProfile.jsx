@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Building2, Calendar, Edit3, Save, X, CheckCircle } from 'lucide-react';
 import { authService } from '../../services/authServices';
+import { DEPARTMENTS } from '../../utils/constants';
+import PhoneInput from '../Common/PhoneInput';
 import Header from '../Header/Header';
 import './UserProfile.css';
 
@@ -255,11 +257,9 @@ const UserProfile = () => {
                   Phone Number
                 </label>
                 {editing ? (
-                  <input
-                    type="tel"
-                    name="phone"
+                  <PhoneInput
                     value={formData.phone}
-                    onChange={handleInputChange}
+                    onChange={(value) => setFormData(prev => ({ ...prev, phone: value }))}
                     placeholder="Enter your phone number"
                   />
                 ) : (
@@ -293,13 +293,16 @@ const UserProfile = () => {
                   Department
                 </label>
                 {editing ? (
-                  <input
-                    type="text"
+                  <select
                     name="department"
                     value={formData.department}
                     onChange={handleInputChange}
-                    placeholder="Enter your department"
-                  />
+                  >
+                    <option value="">Select Department</option>
+                    {DEPARTMENTS.map(department => (
+                      <option key={department} value={department}>{department}</option>
+                    ))}
+                  </select>
                 ) : (
                   <span>{profile?.department || 'Not specified'}</span>
                 )}

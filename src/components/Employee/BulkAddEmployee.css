@@ -606,6 +606,49 @@
   }
 }
 
+/* Progress Bar Styles */
+.processing-progress {
+  margin: 16px 0;
+  padding: 16px;
+  background-color: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 4px;
+  transition: width 0.3s ease-in-out;
+  animation: pulse-progress 2s infinite;
+}
+
+@keyframes pulse-progress {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
 @media (max-width: 480px) {
   .mode-selection {
     grid-template-columns: 1fr;
@@ -615,5 +658,14 @@
   .mode-btn {
     width: 100%;
     justify-content: center;
+  }
+  
+  .processing-progress {
+    margin: 12px 0;
+    padding: 12px;
+  }
+  
+  .progress-info {
+    font-size: 13px;
   }
 }

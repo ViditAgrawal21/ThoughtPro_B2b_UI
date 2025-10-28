@@ -80,11 +80,11 @@ const CompanyDashboard = () => {
                   </div>
                 </div>
                 <div className="metrics-grid">
-                  <MetricCard {...data?.productivity.daily} period="Daily" />
-                  <MetricCard {...data?.productivity.weekly} period="Weekly" />
-                  <MetricCard {...data?.productivity.today} period="Today" />
-                  <MetricCard {...data?.productivity.yesterday} period="Yesterday" />
-                  <MetricCard {...data?.productivity.thisWeek} period="This Week" />
+                  <MetricCard {...data?.productivity.daily} />
+                  <MetricCard {...data?.productivity.weekly} />
+                  <MetricCard {...data?.productivity.today} />
+                  <MetricCard {...data?.productivity.yesterday} />
+                  <MetricCard {...data?.productivity.thisWeek} />
                 </div>
               </div>
             )}
@@ -99,11 +99,11 @@ const CompanyDashboard = () => {
                   </div>
                 </div>
                 <div className="metrics-grid">
-                  <MetricCard {...data?.phoneUsageWeekdays.daily} period="Daily" />
-                  <MetricCard {...data?.phoneUsageWeekdays.weekly} period="Weekly" />
-                  <MetricCard {...data?.phoneUsageWeekdays.today} period="Today" />
-                  <MetricCard {...data?.phoneUsageWeekdays.yesterday} period="Yesterday" />
-                  <MetricCard {...data?.phoneUsageWeekdays.thisWeek} period="This Week" />
+                  <MetricCard {...data?.phoneUsageWeekdays.daily} />
+                  <MetricCard {...data?.phoneUsageWeekdays.weekly} />
+                  <MetricCard {...data?.phoneUsageWeekdays.today} />
+                  <MetricCard {...data?.phoneUsageWeekdays.yesterday} />
+                  <MetricCard {...data?.phoneUsageWeekdays.thisWeek} />
                 </div>
               </div>
             )}
@@ -118,11 +118,11 @@ const CompanyDashboard = () => {
                   </div>
                 </div>
                 <div className="metrics-grid">
-                  <MetricCard {...data?.phoneUsageWork.daily} period="Daily" />
-                  <MetricCard {...data?.phoneUsageWork.weekly} period="Weekly" />
-                  <MetricCard {...data?.phoneUsageWork.today} period="Today" />
-                  <MetricCard {...data?.phoneUsageWork.yesterday} period="Yesterday" />
-                  <MetricCard {...data?.phoneUsageWork.thisWeek} period="This Week" />
+                  <MetricCard {...data?.phoneUsageWork.daily} />
+                  <MetricCard {...data?.phoneUsageWork.weekly} />
+                  <MetricCard {...data?.phoneUsageWork.today} />
+                  <MetricCard {...data?.phoneUsageWork.yesterday} />
+                  <MetricCard {...data?.phoneUsageWork.thisWeek} />
                 </div>
               </div>
             )}

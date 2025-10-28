@@ -151,19 +151,34 @@
 
 .employee-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-lg);
+}
+
+@media (max-width: 1400px) {
+  .employee-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .employee-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .employee-card {
   background-color: var(--color-card-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
   transition: all var(--transition-base);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .employee-card:hover {
@@ -174,8 +189,11 @@
 
 .employee-info {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .employee-avatar {
@@ -189,6 +207,7 @@
   justify-content: center;
   font-size: var(--font-size-lg);
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .employee-details {
@@ -196,6 +215,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .employee-name {
@@ -203,6 +224,9 @@
   font-weight: 600;
   color: var(--color-text);
   margin-bottom: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .employee-email,
@@ -210,11 +234,13 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .employee-email {
   font-style: italic;
-  word-break: break-all;
 }
 
 .employee-department {
@@ -232,41 +258,112 @@
 
 .employee-actions {
   display: flex;
-  gap: var(--spacing-sm);
+  gap: 8px;
   flex-shrink: 0;
-  align-items: center;
+  align-items: flex-start;
+  padding-top: 4px;
 }
 
 .action-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-border);
   background-color: var(--color-card-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-base);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.action-btn span {
+  display: none;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}
+
+.action-btn:active {
+  transform: translateY(0);
 }
 
 .edit-btn {
-  color: var(--color-primary);
+  color: #8b5cf6;
+  border-color: #8b5cf6;
 }
 
 .edit-btn:hover {
-  background-color: rgba(210, 122, 213, 0.1);
-  border-color: var(--color-primary);
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: white;
+  border-color: #8b5cf6;
 }
 
 .delete-btn {
-  color: var(--color-error);
+  color: #ef4444;
+  border-color: #ef4444;
 }
 
 .delete-btn:hover {
-  background-color: rgba(239, 68, 68, 0.1);
-  border-color: var(--color-error);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border-color: #ef4444;
+}
+
+/* Resend Credentials Button Styles */
+.resend-btn {
+  color: #10b981;
+  border-color: #10b981;
+  position: relative;
+}
+
+.resend-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-color: #10b981;
+}
+
+.resend-btn.loading {
+  cursor: wait;
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.resend-btn.loading .spinning {
+  animation: spin 1s linear infinite;
+}
+
+.resend-btn.success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #10b981;
+  color: white;
+  pointer-events: none;
+}
+
+.resend-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@keyframes resendButtonSuccess {
+  0% {
+    transform: translateY(-2px) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.05);
+  }
+  100% {
+    transform: translateY(-2px) scale(1);
+  }
+}
+
+.resend-btn.success {
+  animation: resendButtonSuccess 0.4s ease-in-out;
 }
 
 @keyframes deleteButtonPulse {
@@ -518,6 +615,75 @@
   color: var(--color-text-secondary);
   font-size: var(--font-size-xs);
   font-style: italic;
+  margin: 0;
+}
+
+/* Enhanced Delete Modal Styles */
+.employee-delete-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.delete-confirmation-text {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.employee-info-box {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) 0;
+}
+
+.info-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: 400;
+}
+
+.warning-box {
+  background-color: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.warning-box .warning-text {
+  color: #78350f;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin: 0;
+  font-style: normal;
+}
+
+.warning-box .info-text {
+  color: #78350f;
+  font-size: var(--font-size-xs);
+  margin: 0;
+  line-height: 1.4;
 }
 
 .modal-actions {
@@ -560,8 +726,173 @@
   gap: var(--spacing-xs);
 }
 
-.confirm-delete-btn:hover {
+.confirm-delete-btn:hover:not(:disabled) {
   background-color: #dc2626;
   border-color: #dc2626;
   transform: translateY(-1px);
+}
+
+.confirm-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirm-delete-btn .spinning {
+  animation: spin 1s linear infinite;
+}
+
+.cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Error Banner Styles */
+.error-banner {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-lg);
+  padding: 0;
+  overflow: hidden;
+}
+
+.error-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+}
+
+.error-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.error-message {
+  flex: 1;
+  color: #7f1d1d;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
+.error-dismiss {
+  background: none;
+  border: none;
+  color: #7f1d1d;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.error-dismiss:hover {
+  background-color: #fecaca;
+}
+
+/* Refresh button styles */
+.refresh-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.refresh-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.refresh-btn:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.refresh-btn:hover::before {
+  left: 100%;
+}
+
+.refresh-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.refresh-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+}
+
+.refresh-btn:disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Refresh icon animations */
+.refresh-icon {
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.refresh-icon.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Refreshing state styles */
+.refresh-btn.refreshing {
+  background: linear-gradient(135deg, #4c51bf 0%, #553c9a 100%);
+  pointer-events: none;
+}
+
+.refresh-btn.refreshing span {
+  opacity: 0.8;
+}
+
+/* Pulse animation for refreshing state */
+.refresh-btn.refreshing {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Shield, BarChart3, AlertCircle } from 'lucide-react';
+import { Shield, BarChart3, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { validateEmail } from '../../utils/helpers';
 import './LoginPage.css';
@@ -10,6 +10,7 @@ const AdminLoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -32,42 +33,43 @@ const AdminLoginPage = () => {
     setLoading(true);
     
     try {
+      console.log('AdminLoginPage: Attempting login for admin:', email);
+      
       // Use admin login flow with proper userType parameter
       const result = await login(email, password, 'admin');
       
-      if (result.success) {
-        // Redirect to admin dashboard
-        navigate('/admin/dashboard');
-      } else {
-        setError(result.error || 'Admin login failed');
-      }
-    } catch (err) {
-      console.error('Admin login error:', err);
-      setError('Invalid admin credentials');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDemoLogin = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      console.log('Starting demo admin login...');
-      // Use admin login flow for demo with proper userType parameter
-      const result = await login('syneptlabs@gmail.com', 'Syneptlabs@a19', 'admin');
-      console.log('Demo login result:', result);
+      console.log('AdminLoginPage: Login result:', result);
       
       if (result.success) {
-        console.log('Demo login successful, navigating to admin dashboard...');
-        navigate('/admin/dashboard');
+        console.log('AdminLoginPage: Login successful, redirecting to admin dashboard...');
+        // Small delay to ensure localStorage is updated
+        setTimeout(() => {
+          navigate('/admin/dashboard');
+        }, 100);
       } else {
-        console.log('Demo login failed:', result);
-        setError(result.error || 'Demo login failed - please try again');
+        console.log('AdminLoginPage: Login failed:', result.error);
+        setError(result.error || result.message || 'Admin login failed. Please check your credentials.');
       }
     } catch (err) {
-      console.error('Demo login error:', err);
-      setError('Demo login failed: ' + (err.message || 'Unknown error'));
+      console.error('AdminLoginPage: Login error:', err);
+      
+      // Handle specific error types
+      if (err.message.includes('Invalid admin credentials') || 
+          err.message.includes('401') || 
+          err.message.includes('Unauthorized')) {
+        setError('Invalid credentials. Please check your email and password.');
+      } else if (err.message.includes('Access denied') || 
+                 err.message.includes('403')) {
+        setError('Access denied. This account does not have admin privileges.');
+      } else if (err.message.includes('Network error') || 
+                 err.message.includes('NETWORK_ERROR')) {
+        setError('Network connection error. Please check your internet connection and try again.');
+      } else if (err.message.includes('Server error') || 
+                 err.message.includes('500')) {
+        setError('Server temporarily unavailable. Please try again in a few moments.');
+      } else {
+        setError('Invalid credentials. Please check your email and password.');
+      }
     } finally {
       setLoading(false);
     }
@@ -91,22 +93,35 @@ const AdminLoginPage = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="syneptlabs@gmail.com"
+              placeholder="Enter admin email"
               className="input"
               disabled={loading}
+              autoComplete="email"
             />
           </div>
 
           <div className="input-group">
             <label className="label">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
-              className="input"
-              disabled={loading}
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter admin password"
+                className="input"
+                disabled={loading}
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={loading}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
           {error && (
@@ -123,28 +138,9 @@ const AdminLoginPage = () => {
           >
             {loading ? 'Signing in...' : 'Admin Sign In'}
           </button>
-
-          <button 
-            type="button"
-            onClick={handleDemoLogin} 
-            className="demo-button"
-            disabled={loading}
-          >
-            Use Demo Admin Account
-          </button>
         </form>
 
         <div className="login-footer">
-          {/* <div className="admin-features">
-            <h4>Admin Features:</h4>
-            <ul>
-              <li>✓ Manage all companies</li>
-              <li>✓ View platform analytics</li>
-              <li>✓ User management</li>
-              <li>✓ System settings</li>
-            </ul>
-          </div> */}
-          
           <div className="login-switch">
             <p>Not an admin?</p>
             <Link to="/login" className="switch-link">
