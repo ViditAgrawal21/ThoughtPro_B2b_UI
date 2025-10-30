@@ -6,9 +6,9 @@
 # testing
 /coverage
 
-# production
-/build
-/src/build
+# # production
+# /build
+# /src/build
 
 # misc
 .DS_Store
