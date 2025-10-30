@@ -116,7 +116,18 @@ export const holidayService = {
       }
 
       const data = await response.json();
-      return data.data || data || [];
+      
+      // Handle different response structures
+      let holidays = [];
+      if (Array.isArray(data)) {
+        holidays = data;
+      } else if (data.data && Array.isArray(data.data)) {
+        holidays = data.data;
+      } else if (data.holidays && Array.isArray(data.holidays)) {
+        holidays = data.holidays;
+      }
+      
+      return holidays;
     } catch (error) {
       console.error('Error fetching backend holidays:', error);
       return [];
@@ -134,18 +145,24 @@ export const holidayService = {
       // Get local holidays for the year
       const localHolidays = holidayService.getHolidaysForYear(year);
       
+      // Ensure both are arrays
+      const backendHolidaysArray = Array.isArray(backendHolidays) ? backendHolidays : [];
+      const localHolidaysArray = Array.isArray(localHolidays) ? localHolidays : [];
+      
       // Combine and remove duplicates based on date
       const holidayMap = new Map();
       
       // Add backend holidays first (they take priority)
-      backendHolidays.forEach(holiday => {
-        const date = holiday.date.split('T')[0];
-        holidayMap.set(date, holiday);
+      backendHolidaysArray.forEach(holiday => {
+        if (holiday && holiday.date) {
+          const date = holiday.date.split('T')[0];
+          holidayMap.set(date, holiday);
+        }
       });
       
       // Add local holidays if not already present
-      localHolidays.forEach(holiday => {
-        if (!holidayMap.has(holiday.date)) {
+      localHolidaysArray.forEach(holiday => {
+        if (holiday && holiday.date && !holidayMap.has(holiday.date)) {
           holidayMap.set(holiday.date, holiday);
         }
       });

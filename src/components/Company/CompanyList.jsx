@@ -94,9 +94,9 @@ const CompanyList = () => {
           </div>
           <button 
             onClick={() => setShowAddModal(true)} 
-            className="add-company-btn"
+            className="add-company-btn btn-small"
           >
-            <Plus size={20} />
+            <Plus size={14} />
             Add Company
           </button>
         </div>

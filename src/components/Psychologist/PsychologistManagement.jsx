@@ -109,7 +109,11 @@ const PsychologistManagement = ({ onBack }) => {
 
     // Filter by status
     if (selectedStatus) {
-      filtered = filtered.filter((p) => p.status === selectedStatus);
+      if (selectedStatus === 'active') {
+        filtered = filtered.filter((p) => !p.is_disabled);
+      } else if (selectedStatus === 'inactive') {
+        filtered = filtered.filter((p) => p.is_disabled === true);
+      }
     }
 
     setFilteredPsychologists(filtered);
@@ -137,16 +141,16 @@ const PsychologistManagement = ({ onBack }) => {
 
   const handleToggleStatus = async (psychologist) => {
     try {
-      const isActive = psychologist.status === 'active';
-      const action = isActive
+      const isEnabled = !psychologist.is_disabled;
+      const action = isEnabled
         ? await psychologistService.disablePsychologist(psychologist.id)
         : await psychologistService.enablePsychologist(psychologist.id);
 
       if (action.success) {
         fetchPsychologists();
         showNotification(
-          `${psychologist.name || getFullName(psychologist)} ${
-            isActive ? 'disabled' : 'enabled'
+          `${getFullName(psychologist)} ${
+            isEnabled ? 'disabled' : 'enabled'
           } successfully`,
           'success'
         );
@@ -205,21 +209,23 @@ const PsychologistManagement = ({ onBack }) => {
       {view === 'list' && (
       <div className="psychologist-management">
         <AdminHeader />
+        {/* Back Button - Outside Header */}
+        <button onClick={handleBack} className="back-button">
+          <ArrowLeft size={20} />
+          <span>Back to Admin</span>
+        </button>
+        
         {/* Header */}
         <div className="page-header">
           <div className="header-left">
-            <button onClick={handleBack} className="back-button">
-              <ArrowLeft size={20} />
-              <span>Back to Admin</span>
-            </button>
             <h1>Psychologist Management</h1>
             <p>Manage psychologist profiles, availability, bookings, and settings</p>
           </div>
           <button
             onClick={() => setView('add')}
-            className="btn-primary"
+            className="btn-primary btn-small"
           >
-            <Plus size={18} />
+            <Plus size={14} />
             Add Psychologist
           </button>
         </div>
@@ -417,10 +423,10 @@ const PsychologistManagement = ({ onBack }) => {
                           </button>
                           <button
                             onClick={() => handleToggleStatus(psychologist)}
-                            className={`action-btn ${
+                            className={`action-btn power-btn ${
                               psychologist.is_disabled
-                                ? 'enable'
-                                : 'disable'
+                                ? 'disabled'
+                                : 'enabled'
                             }`}
                             title={
                               psychologist.is_disabled

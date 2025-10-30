@@ -34,6 +34,7 @@ const PsychologistAvailabilityPage = () => {
   const [showBookings, setShowBookings] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [errorDetails, setErrorDetails] = useState(null);
   const [success, setSuccess] = useState(null);
   const [showAddSlotModal, setShowAddSlotModal] = useState(false);
   const [newSlot, setNewSlot] = useState({
@@ -57,14 +58,22 @@ const PsychologistAvailabilityPage = () => {
   const loadPsychologistData = React.useCallback(async () => {
     try {
       setLoading(true);
+      console.log('🔍 Loading psychologist data for ID:', psychologistId);
       const data = await psychologistService.getPsychologistById(psychologistId);
       
       // Handle different response structures
       const psychologistData = data?.data || data;
-      console.log('Loaded psychologist data:', psychologistData);
+      console.log('✅ Loaded psychologist data:', psychologistData);
+      console.log('👤 Psychologist ID from data:', psychologistData?.id);
+      console.log('👤 Psychologist name:', psychologistData?.name);
       setPsychologist(psychologistData);
     } catch (err) {
-      setError('Failed to load psychologist data');
+      const errorMessage = err.message || 'Failed to load psychologist data';
+      setError(errorMessage);
+      console.error('❌ Failed to load psychologist:', err);
+      if (err.technicalDetails) {
+        setErrorDetails(err.technicalDetails);
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -73,7 +82,9 @@ const PsychologistAvailabilityPage = () => {
 
   const loadAvailability = React.useCallback(async () => {
     try {
+      console.log('Fetching availability for psychologist:', psychologistId);
       const data = await availabilityService.getAvailabilityByPsychologist(psychologistId);
+      console.log('Raw availability data received:', data);
       
       // Ensure we always set an array
       let slots = [];
@@ -85,9 +96,15 @@ const PsychologistAvailabilityPage = () => {
         slots = data.data;
       }
       
+      console.log('Processed slots:', slots);
       setAvailability(slots);
     } catch (err) {
       console.error('Error loading availability:', err);
+      const errorMessage = err.message || 'Failed to load availability data';
+      setError(errorMessage);
+      if (err.technicalDetails) {
+        setErrorDetails(err.technicalDetails);
+      }
       setAvailability([]);
     }
   }, [psychologistId]);
@@ -215,25 +232,44 @@ const PsychologistAvailabilityPage = () => {
     try {
       setSaving(true);
       setError(null);
+      setErrorDetails(null);
       
-      // Create proper ISO datetime string
-      const dateTimeString = `${newSlot.date}T${newSlot.startTime}:00.000Z`;
+      // Check if date is in the past
+      if (availabilityService.isPastDate(newSlot.date)) {
+        setError('Cannot create availability slots for past dates. You can only view past bookings.');
+        setSaving(false);
+        return;
+      }
       
-      console.log('Creating slot with data:', {
+      // Validate psychologist ID
+      if (!psychologistId) {
+        setError('Psychologist ID is missing. Please refresh the page.');
+        setSaving(false);
+        return;
+      }
+      
+      // Create proper ISO datetime string in UTC format
+      const dateTimeString = `${newSlot.date}T${newSlot.startTime}:00Z`;
+      
+      console.log('🔍 Psychologist ID:', psychologistId);
+      console.log('🔍 Psychologist object:', psychologist);
+      console.log('🔍 Creating slot with data:', {
         psychologist_id: psychologistId,
         time_slot: dateTimeString,
         availability_status: newSlot.status
       });
       
-      await availabilityService.createSlot({
+      const result = await availabilityService.createSlot({
         psychologist_id: psychologistId,
         time_slot: dateTimeString,
         availability_status: newSlot.status
       });
       
-      setSuccess('Availability slot added successfully');
+      console.log('✅ Slot created successfully:', result);
+      
+      // Show API success message
+      setSuccess(result.message || 'Availability slot created successfully');
       setShowAddSlotModal(false);
-      loadAvailability();
       
       // Reset form
       setNewSlot({
@@ -243,45 +279,89 @@ const PsychologistAvailabilityPage = () => {
         status: 'Available'
       });
       
+      // Immediately reload availability data
+      console.log('🔄 Reloading availability data...');
+      await loadAvailability();
+      console.log('✅ Availability reloaded successfully');
+      
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      console.error('Error adding slot:', err);
-      setError(err.message || 'Failed to add availability slot');
-      setTimeout(() => setError(null), 5000);
+      console.error('❌ Error adding slot:', err);
+      const errorMessage = err.message || 'Failed to add availability slot';
+      setError(errorMessage);
+      if (err.technicalDetails) {
+        setErrorDetails(err.technicalDetails);
+      }
+      setTimeout(() => {
+        setError(null);
+        setErrorDetails(null);
+      }, 10000);
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDeleteSlot = async (slotId) => {
+  const handleDeleteSlot = async (slotId, slotDate) => {
+    // Check if slot is in the past
+    if (availabilityService.isPastDate(slotDate)) {
+      setError('Cannot delete slots for past dates. Past bookings are view-only.');
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
+
     if (!window.confirm('Are you sure you want to delete this slot?')) return;
     
     try {
       setSaving(true);
-      await availabilityService.deleteSlot(slotId);
-      setSuccess('Slot deleted successfully');
+      setError(null);
+      setErrorDetails(null);
+      const result = await availabilityService.deleteSlot(slotId);
+      setSuccess(result.message || 'Slot deleted successfully');
       loadAvailability();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      setError(err.message || 'Failed to delete slot');
-      setTimeout(() => setError(null), 5000);
+      const errorMessage = err.message || 'Failed to delete slot';
+      setError(errorMessage);
+      if (err.technicalDetails) {
+        setErrorDetails(err.technicalDetails);
+      }
+      setTimeout(() => {
+        setError(null);
+        setErrorDetails(null);
+      }, 10000);
     } finally {
       setSaving(false);
     }
   };
 
-  const handleUpdateSlotStatus = async (slotId, newStatus) => {
+  const handleUpdateSlotStatus = async (slotId, newStatus, slotDate) => {
+    // Check if slot is in the past
+    if (availabilityService.isPastDate(slotDate)) {
+      setError('Cannot update slots for past dates. Past bookings are view-only.');
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
+
     try {
       setSaving(true);
-      await availabilityService.updateSlotStatus(slotId, {
+      setError(null);
+      setErrorDetails(null);
+      const result = await availabilityService.updateSlotStatus(slotId, {
         availability_status: newStatus
       });
-      setSuccess('Status updated successfully');
+      setSuccess(result.message || 'Status updated successfully');
       loadAvailability();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      setError(err.message || 'Failed to update status');
-      setTimeout(() => setError(null), 5000);
+      const errorMessage = err.message || 'Failed to update status';
+      setError(errorMessage);
+      if (err.technicalDetails) {
+        setErrorDetails(err.technicalDetails);
+      }
+      setTimeout(() => {
+        setError(null);
+        setErrorDetails(null);
+      }, 10000);
     } finally {
       setSaving(false);
     }
@@ -291,23 +371,32 @@ const PsychologistAvailabilityPage = () => {
     try {
       setSaving(true);
       setError(null);
+      setErrorDetails(null);
       
-      await availabilityService.createBulkSlots({
+      const result = await availabilityService.createBulkSlots({
         psychologist_ids: [psychologistId],
         num_days: parseInt(bulkConfig.numDays),
         start_time: bulkConfig.startTime,
         end_time: bulkConfig.endTime
       });
       
-      setSuccess(`Successfully created slots for ${bulkConfig.numDays} days`);
+      // Show API success message
+      setSuccess(result.message || `Successfully created slots for ${bulkConfig.numDays} days`);
       setShowBulkModal(false);
       loadAvailability();
       
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       console.error('Error creating bulk slots:', err);
-      setError(err.message || 'Failed to create bulk availability slots');
-      setTimeout(() => setError(null), 5000);
+      const errorMessage = err.message || 'Failed to create bulk availability slots';
+      setError(errorMessage);
+      if (err.technicalDetails) {
+        setErrorDetails(err.technicalDetails);
+      }
+      setTimeout(() => {
+        setError(null);
+        setErrorDetails(null);
+      }, 10000);
     } finally {
       setSaving(false);
     }
@@ -316,27 +405,43 @@ const PsychologistAvailabilityPage = () => {
   const handleToggleDay = async () => {
     if (!selectedDate) return;
     
+    // Check if date is in the past
+    if (availabilityService.isPastDate(selectedDate)) {
+      setError('Cannot modify availability for past dates. Past bookings are view-only.');
+      setTimeout(() => setError(null), 5000);
+      return;
+    }
+    
     try {
       setSaving(true);
       setError(null);
+      setErrorDetails(null);
       
       const dateStr = selectedDate.toISOString().split('T')[0];
       
-      await availabilityService.toggleDayAvailability({
+      const result = await availabilityService.toggleDayAvailability({
         psychologist_id: psychologistId,
         date: dateStr,
         status: toggleDayStatus
       });
       
-      setSuccess(`All slots for ${dateStr} set to ${toggleDayStatus}`);
+      // Show API success message
+      setSuccess(result.message || `All slots for ${dateStr} set to ${toggleDayStatus}`);
       setShowToggleDayModal(false);
       loadAvailability();
       
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
       console.error('Error toggling day:', err);
-      setError(err.message || 'Failed to toggle day availability');
-      setTimeout(() => setError(null), 5000);
+      const errorMessage = err.message || 'Failed to toggle day availability';
+      setError(errorMessage);
+      if (err.technicalDetails) {
+        setErrorDetails(err.technicalDetails);
+      }
+      setTimeout(() => {
+        setError(null);
+        setErrorDetails(null);
+      }, 10000);
     } finally {
       setSaving(false);
     }
@@ -444,7 +549,66 @@ const PsychologistAvailabilityPage = () => {
         {error && (
           <div className="message error-message">
             <AlertCircle size={20} />
-            <span>{error}</span>
+            <div className="error-content">
+              <span className="error-text">{error}</span>
+              {errorDetails && (
+                <details className="error-technical-details">
+                  <summary>🔧 Technical Details (for developers)</summary>
+                  <div className="technical-info">
+                    <div className="tech-info-section">
+                      <strong>Endpoint:</strong> 
+                      <code>{errorDetails.endpoint || 'N/A'}</code>
+                    </div>
+                    <div className="tech-info-section">
+                      <strong>Method:</strong> 
+                      <code>{errorDetails.method || 'N/A'}</code>
+                    </div>
+                    {errorDetails.statusCode && (
+                      <div className="tech-info-section">
+                        <strong>HTTP Status:</strong> 
+                        <code>{errorDetails.statusCode} - {errorDetails.statusText}</code>
+                      </div>
+                    )}
+                    {errorDetails.validation && (
+                      <div className="tech-info-section">
+                        <strong>Validation Error:</strong> 
+                        <code>{errorDetails.validation}</code>
+                      </div>
+                    )}
+                    {errorDetails.responseData && (
+                      <div className="tech-info-section">
+                        <strong>API Response:</strong>
+                        <pre>{JSON.stringify(errorDetails.responseData, null, 2)}</pre>
+                      </div>
+                    )}
+                    {errorDetails.requestPayload && (
+                      <div className="tech-info-section">
+                        <strong>Request Payload:</strong>
+                        <pre>{JSON.stringify(errorDetails.requestPayload, null, 2)}</pre>
+                      </div>
+                    )}
+                    {errorDetails.timestamp && (
+                      <div className="tech-info-section">
+                        <strong>Timestamp:</strong> 
+                        <code>{new Date(errorDetails.timestamp).toLocaleString()}</code>
+                      </div>
+                    )}
+                    <button 
+                      className="btn-copy-error"
+                      onClick={() => {
+                        navigator.clipboard.writeText(JSON.stringify({
+                          error: error,
+                          ...errorDetails
+                        }, null, 2));
+                        alert('Error details copied to clipboard! Share this with the developer.');
+                      }}
+                    >
+                      📋 Copy Error Details
+                    </button>
+                  </div>
+                </details>
+              )}
+            </div>
           </div>
         )}
 
@@ -480,7 +644,8 @@ const PsychologistAvailabilityPage = () => {
             <button 
               onClick={() => setShowToggleDayModal(true)} 
               className="btn-quick-action toggle"
-              title="Set all slots for selected date to same status"
+              disabled={availabilityService.isPastDate(selectedDate)}
+              title={availabilityService.isPastDate(selectedDate) ? 'Cannot modify past dates' : 'Set all slots for selected date to same status'}
             >
               <Clock size={16} />
               Toggle Entire Day
@@ -559,10 +724,15 @@ const PsychologistAvailabilityPage = () => {
                   month: 'long', 
                   day: 'numeric' 
                 })}
+                {availabilityService.isPastDate(selectedDate) && (
+                  <span className="past-date-badge">Past Date - View Only</span>
+                )}
               </h3>
               <button 
                 onClick={() => setShowAddSlotModal(true)}
                 className="btn-add-slot"
+                disabled={availabilityService.isPastDate(selectedDate)}
+                title={availabilityService.isPastDate(selectedDate) ? 'Cannot add slots to past dates' : 'Add availability slot'}
               >
                 <Plus size={16} />
                 Add Slot
@@ -585,41 +755,52 @@ const PsychologistAvailabilityPage = () => {
                 <div className="no-slots">
                   <Clock size={32} />
                   <p>No availability slots for this day</p>
-                  <button onClick={() => setShowAddSlotModal(true)} className="btn-secondary">
+                  <button 
+                    onClick={() => setShowAddSlotModal(true)} 
+                    className="btn-secondary"
+                    disabled={availabilityService.isPastDate(selectedDate)}
+                  >
                     Add First Slot
                   </button>
                 </div>
               ) : (
                 getAvailabilityForDate(selectedDate)
                   .sort((a, b) => new Date(a.time_slot) - new Date(b.time_slot))
-                  .map((slot) => (
-                    <div key={slot.id} className={`slot-card ${getStatusColor(slot.availability_status)}`}>
-                      <div className="slot-info">
-                        <div className="slot-time">
-                          <Clock size={16} />
-                          {formatTime(slot.time_slot)}
+                  .map((slot) => {
+                    const slotDate = new Date(slot.time_slot);
+                    const isPast = availabilityService.isPastDate(slotDate);
+                    
+                    return (
+                      <div key={slot.id} className={`slot-card ${getStatusColor(slot.availability_status)} ${isPast ? 'past-slot' : ''}`}>
+                        <div className="slot-info">
+                          <div className="slot-time">
+                            <Clock size={16} />
+                            {formatTime(slot.time_slot)}
+                            {isPast && <span className="past-label">(Past - View Only)</span>}
+                          </div>
+                          <select
+                            value={slot.availability_status}
+                            onChange={(e) => handleUpdateSlotStatus(slot.id, e.target.value, slotDate)}
+                            className="status-select"
+                            disabled={saving || isPast}
+                            title={isPast ? 'Cannot edit past slots' : 'Change status'}
+                          >
+                            {statusOptions.map(status => (
+                              <option key={status} value={status}>{status}</option>
+                            ))}
+                          </select>
                         </div>
-                        <select
-                          value={slot.availability_status}
-                          onChange={(e) => handleUpdateSlotStatus(slot.id, e.target.value)}
-                          className="status-select"
-                          disabled={saving}
+                        <button
+                          onClick={() => handleDeleteSlot(slot.id, slotDate)}
+                          className="btn-delete"
+                          disabled={saving || isPast}
+                          title={isPast ? 'Cannot delete past slots' : 'Delete slot'}
                         >
-                          {statusOptions.map(status => (
-                            <option key={status} value={status}>{status}</option>
-                          ))}
-                        </select>
+                          <Trash2 size={16} />
+                        </button>
                       </div>
-                      <button
-                        onClick={() => handleDeleteSlot(slot.id)}
-                        className="btn-delete"
-                        disabled={saving}
-                        title="Delete slot"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  ))
+                    );
+                  })
               )}
             </div>
           </div>
@@ -639,8 +820,10 @@ const PsychologistAvailabilityPage = () => {
                   <input
                     type="date"
                     value={newSlot.date}
+                    min={new Date().toISOString().split('T')[0]}
                     onChange={(e) => setNewSlot({ ...newSlot, date: e.target.value })}
                   />
+                  <small className="form-hint">You can only create slots for today or future dates</small>
                 </div>
 
                 <div className="form-row">
