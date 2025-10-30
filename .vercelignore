@@ -1,0 +1,9 @@
+# Vercel ignore file
+# Don't upload these to Vercel during deployment
+
+node_modules
+.git
+.env.local
+.env.development.local
+.env.test.local
+*.log
