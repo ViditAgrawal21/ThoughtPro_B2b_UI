@@ -11,6 +11,6 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "build"],
   "exclude": ["node_modules", "build"]
 }
