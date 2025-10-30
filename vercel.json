@@ -92,11 +92,5 @@
       "REACT_APP_DEBUG_MODE": "false",
       "REACT_APP_OFFLINE_MODE": "false"
     }
-  },
-  "functions": {
-    "api/**/*.js": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
   }
 }
