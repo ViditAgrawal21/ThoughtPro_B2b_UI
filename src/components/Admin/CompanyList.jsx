@@ -12,7 +12,8 @@ import {
   Calendar,
   CheckCircle,
   XCircle,
-  MoreVertical
+  MoreVertical,
+  ArrowLeft
 } from 'lucide-react';
 import { companyService } from '../../services/companyService';
 import AdminHeader from '../Header/AdminHeader';
@@ -309,6 +310,27 @@ const CompanyList = () => {
       <div className="company-list">
         <div className="page-header">
           <div className="header-left">
+            <button 
+              className="back-to-dashboard-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Back button clicked - navigating to /admin/dashboard');
+                window.location.href = '/admin/dashboard';
+              }}
+              title="Back to Dashboard"
+              type="button"
+              style={{ 
+                cursor: 'pointer', 
+                zIndex: 1000, 
+                position: 'relative',
+                pointerEvents: 'auto',
+                border: '2px solid red'
+              }}
+            >
+              <ArrowLeft size={20} />
+              Back to Dashboard
+            </button>
             <h1>Companies</h1>
             <p>Manage all registered companies</p>
         </div>

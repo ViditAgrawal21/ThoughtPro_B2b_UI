@@ -12,46 +12,50 @@
 
 /* Back Button */
 .back-button {
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 8px;
   background: none;
   border: none;
   color: var(--color-primary);
-  cursor: pointer;
-  padding: 8px 0;
+  cursor: pointer !important;
+  padding: 8px 12px;
+  margin-bottom: 20px;
   font-size: 14px;
-  transition: color 0.2s ease;
-  font-weight: 500;
-  margin-bottom: 24px;
+  transition: all 0.2s ease;
+  pointer-events: auto !important;
+  z-index: 1000;
+  position: static;
 }
 
 .back-button:hover {
   color: var(--color-primary-hover);
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 6px;
+}
+
+.back-button:active {
+  transform: scale(0.98);
 }
 
 /* Page Header */
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--color-border);
-  gap: 20px;
 }
 
 .header-left {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
   flex: 1;
 }
 
 .header-left h1 {
-  margin: 0;
-  font-size: 32px;
-  font-weight: 700;
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 600;
   color: var(--color-text);
 }
 
@@ -62,23 +66,19 @@
 }
 
 .btn-primary {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   background: var(--color-primary);
   color: white;
   border: none;
   border-radius: var(--radius-md);
-  padding: 6px 12px;
-  font-size: 12px;
+  padding: 8px 16px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  width: fit-content;
-  max-width: fit-content;
-  flex-shrink: 0;
-  align-self: flex-start;
 }
 
 .btn-primary:hover {

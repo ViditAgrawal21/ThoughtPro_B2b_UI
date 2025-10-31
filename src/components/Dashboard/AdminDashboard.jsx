@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, Building2, Brain, Calendar, Plus } from 'lucide-react';
+import { Users, Building2, Brain, Calendar, Plus, BarChart3 } from 'lucide-react';
 import './AdminDashboard.css';
 import AdminHeader from '../Header/AdminHeader';
 
@@ -86,19 +86,19 @@ const AdminDashboard = () => {
               icon={Users}
               title="Total Employees"
               value={loading ? '...' : stats.totalEmployees}
-              color="green"
+              color="pink"
             />
             <StatCard
               icon={Brain}
               title="Psychologists"
               value={loading ? '...' : stats.totalPsychologists}
-              color="purple"
+              color="cyan"
             />
             <StatCard
               icon={Calendar}
               title="Total Bookings"
               value={loading ? '...' : stats.totalBookings}
-              color="orange"
+              color="lime"
             />
           </div>
 
@@ -117,6 +117,12 @@ const AdminDashboard = () => {
                 title="Psychologist Management"
                 description="Add a new psychologist to the network"
                 onClick={() => navigate('/admin/psychologists/add')}
+              />
+              <QuickAction
+                icon={BarChart3}
+                title="Usage Analytics"
+                description="View detailed analytics and usage reports"
+                onClick={() => navigate('/admin/analytics')}
               />
             </div>
           </div>

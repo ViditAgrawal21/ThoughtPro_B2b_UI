@@ -15,7 +15,7 @@ import EmployeeList from './components/Employee/EmployeeList';
 import CompanyManagement from './components/Admin/CompanyManagement';
 import PsychologistManagement from './components/Psychologist/PsychologistManagement';
 import PsychologistAvailabilityPage from './components/Psychologist/PsychologistAvailabilityPage';
-
+import AnalyticsDashboard from './components/Admin/AnalyticsDashboard';
 import BookingList from './components/Booking/BookingList';
 import CompanyForgotPassword from './components/Auth/CompanyForgotPassword';
 import './App.css';
@@ -129,6 +129,26 @@ const AppRoutes = () => {
         element={
           <PrivateRoute requiredRole="admin">
             <AdminDashboard />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Admin Analytics Dashboard - For Admin and Company Owner */}
+      <Route
+        path="/admin/analytics"
+        element={
+          <PrivateRoute requiredRole="admin">
+            <AnalyticsDashboard />
+          </PrivateRoute>
+        }
+      />
+
+      {/* Company Analytics Dashboard - Same component for company owners */}
+      <Route
+        path="/company/analytics"
+        element={
+          <PrivateRoute requiredRole="company_owner">
+            <AnalyticsDashboard />
           </PrivateRoute>
         }
       />

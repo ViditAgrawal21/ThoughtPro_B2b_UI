@@ -33,6 +33,7 @@
 .header-left .back-button {
   align-self: flex-start;
   margin-bottom: 12px;
+  position: static;
 }
 
 .header-left h1 {
@@ -337,21 +338,30 @@
 }
 
 .back-button {
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 8px;
   background: none;
   border: none;
   color: var(--color-primary);
-  cursor: pointer;
-  padding: 8px 0;
+  cursor: pointer !important;
+  padding: 8px 12px;
   margin-bottom: 20px;
   font-size: 14px;
   transition: color 0.2s ease;
+  pointer-events: auto !important;
+  z-index: 1000;
+  position: static;
 }
 
 .back-button:hover {
   color: var(--color-primary-hover);
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 6px;
+}
+
+.back-button:active {
+  transform: scale(0.98);
 }
 
 /* Add Company Header in Management Context */
