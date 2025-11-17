@@ -209,23 +209,22 @@ const PsychologistManagement = ({ onBack }) => {
       {view === 'list' && (
       <div className="psychologist-management">
         <AdminHeader />
-        {/* Back Button - Outside Header */}
-        <button onClick={handleBack} className="back-button">
-          <ArrowLeft size={20} />
-          <span>Back to Admin</span>
-        </button>
         
         {/* Header */}
         <div className="page-header">
           <div className="header-left">
+            <button className="back-button" onClick={handleBack}>
+              <ArrowLeft size={20} />
+              <span>Back to Dashboard</span>
+            </button>
             <h1>Psychologist Management</h1>
             <p>Manage psychologist profiles, availability, bookings, and settings</p>
           </div>
           <button
             onClick={() => setView('add')}
-            className="btn-primary btn-small"
+            className="btn-primary"
           >
-            <Plus size={14} />
+            <Plus size={20} />
             Add Psychologist
           </button>
         </div>

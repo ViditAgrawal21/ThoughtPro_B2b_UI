@@ -341,7 +341,7 @@ const BookingManagement = ({ psychologist, onClose, psychologists = [] }) => {
                 >
                   <option value="">-- Choose Psychologist --</option>
                   {psychologists
-                    .filter(p => p.id !== reassignModal.psychologist?.id)
+                    .filter(p => p.id !== reassignModal.psychologist?.id && !p.is_disabled)
                     .map(p => (
                       <option key={p.id} value={p.id}>
                         {p.name || `${p.firstName} ${p.lastName}`} ({p.specializations?.[0]})

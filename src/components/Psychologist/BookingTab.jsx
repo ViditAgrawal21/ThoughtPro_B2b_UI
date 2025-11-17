@@ -27,7 +27,9 @@ const BookingTab = () => {
       setLoading(true);
       setError(null);
       const data = await psychologistService.getAllPsychologists(1, 100);
-      const psychologistList = Array.isArray(data) ? data : data.data || [];
+      let psychologistList = Array.isArray(data) ? data : data.data || [];
+      // Filter out disabled psychologists
+      psychologistList = psychologistList.filter(p => !p.is_disabled);
       setPsychologists(psychologistList);
       setFilteredPsychologists(psychologistList);
     } catch (err) {

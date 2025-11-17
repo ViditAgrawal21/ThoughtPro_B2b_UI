@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import usageAnalyticsService from '../../services/usageAnalyticsService';
 import './MyUsage.css';
 
 const MyUsage = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
@@ -61,9 +64,16 @@ const MyUsage = () => {
 
   return (
     <div className="my-usage">
-      <div className="usage-header">
-        <h1>📊 My Usage Statistics</h1>
-        <button onClick={loadUsageData} className="refresh-button">
+      <div className="page-header">
+        <div className="header-left">
+          <button className="back-button" onClick={() => navigate('/dashboard')}>
+            <ArrowLeft size={20} />
+            <span>Back to Dashboard</span>
+          </button>
+          <h1>My Usage Statistics</h1>
+          <p>View your personal usage analytics and screen time</p>
+        </div>
+        <button onClick={loadUsageData} className="btn-primary">
           🔄 Refresh
         </button>
       </div>

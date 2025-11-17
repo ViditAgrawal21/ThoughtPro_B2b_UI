@@ -311,44 +311,45 @@ const AnalyticsDashboard = () => {
     <div className="analytics-dashboard">
       <AdminHeader />
       <div className="analytics-dashboard-wrapper">
-        <div className="dashboard-header">
-          <div className="header-title-section">
+        <div className="page-header">
+          <div className="header-left">
             <button 
-              className="back-to-dashboard-btn"
+              className="back-button"
               onClick={() => navigate(userRole === 'admin' ? '/admin/dashboard' : '/dashboard')}
               title="Back to Dashboard"
             >
               <ArrowLeft size={20} />
-              <span>Back</span>
+              <span>Back to Dashboard</span>
             </button>
-            <h1>📊 Usage Analytics Dashboard</h1>
+            <h1>Usage Analytics</h1>
+            <p>Track and analyze usage metrics across companies</p>
           </div>
           <div className="header-actions">
-          <div className="date-range-filter">
-            <input
-              type="date"
-              value={dateRange.startDate}
-              onChange={(e) => handleDateRangeChange('startDate', e.target.value)}
-              placeholder="Start Date"
-            />
-            <span>to</span>
-            <input
-              type="date"
-              value={dateRange.endDate}
-              onChange={(e) => handleDateRangeChange('endDate', e.target.value)}
-              placeholder="End Date"
-            />
-            {(dateRange.startDate || dateRange.endDate) && (
-              <button onClick={clearDateRange} className="clear-button">
-                Clear
-              </button>
-            )}
+            <div className="date-range-filter">
+              <input
+                type="date"
+                value={dateRange.startDate}
+                onChange={(e) => handleDateRangeChange('startDate', e.target.value)}
+                placeholder="Start Date"
+              />
+              <span>to</span>
+              <input
+                type="date"
+                value={dateRange.endDate}
+                onChange={(e) => handleDateRangeChange('endDate', e.target.value)}
+                placeholder="End Date"
+              />
+              {(dateRange.startDate || dateRange.endDate) && (
+                <button onClick={clearDateRange} className="clear-button">
+                  Clear
+                </button>
+              )}
+            </div>
+            <button onClick={loadAnalytics} className="btn-primary">
+              🔄 Refresh
+            </button>
           </div>
-          <button onClick={loadAnalytics} className="refresh-button">
-            🔄 Refresh
-          </button>
         </div>
-      </div>
 
       <div className="dashboard-tabs">
         <button

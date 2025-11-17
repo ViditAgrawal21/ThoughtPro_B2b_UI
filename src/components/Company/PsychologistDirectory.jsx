@@ -31,8 +31,11 @@ const PsychologistDirectory = () => {
       );
       
       if (response.success) {
-        setPsychologists(response.data.psychologists || response.data || []);
-        setTotalPages(Math.ceil((response.data.total || response.data.length || 0) / 10));
+        const psychologists = response.data.psychologists || response.data || [];
+        // Filter out disabled psychologists
+        const activePsychologists = psychologists.filter(p => !p.is_disabled);
+        setPsychologists(activePsychologists);
+        setTotalPages(Math.ceil((activePsychologists.length || 0) / 10));
       } else {
         setPsychologists([]);
         setTotalPages(0);
@@ -312,6 +315,9 @@ const PsychologistDirectory = () => {
             setShowBookingModal(false);
             setSelectedPsychologist(null);
           }}
+          onBookingSuccess={() => {
+            fetchPsychologists();
+          }}
         />
       )}
     </div>
@@ -319,7 +325,7 @@ const PsychologistDirectory = () => {
 };
 
 // Simple booking modal component
-const BookingModal = ({ psychologist, onClose }) => {
+const BookingModal = ({ psychologist, onClose, onBookingSuccess }) => {
   const [bookingData, setBookingData] = useState({
     sessionType: '45min',
     appointmentDate: '',
@@ -346,14 +352,17 @@ const BookingModal = ({ psychologist, onClose }) => {
       
       if (response.success) {
         alert('Booking created successfully!');
+        if (onBookingSuccess) onBookingSuccess();
         onClose();
       } else {
         alert('Booking request submitted! You will receive a confirmation shortly.');
+        if (onBookingSuccess) onBookingSuccess();
         onClose();
       }
     } catch (error) {
       console.error('Booking error:', error);
       alert('Booking request submitted! You will receive a confirmation shortly.');
+      if (onBookingSuccess) onBookingSuccess();
       onClose();
     } finally {
       setLoading(false);

@@ -157,9 +157,16 @@ const PsychologistSettings = ({ psychologist, onSuccess, onClose }) => {
     setError(null);
 
     try {
-      const updatedPsychologist = await psychologistService.updatePsychologistSettings(
+      const updatePayload = {
+        displayCharges: formData.displayCharges,
+        costToSynept: formData.costToSynept,
+        weekly_booking_limit: formData.weeklySessionsAllowed,
+        monthly_booking_limit: formData.monthlySessionsAllowed,
+      };
+
+      await psychologistService.updatePsychologist(
         psychologist.id,
-        formData
+        updatePayload
       );
 
       setSuccess('Settings updated successfully!');

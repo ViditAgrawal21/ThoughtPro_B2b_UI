@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Users, Building2, Brain, Calendar, Plus, BarChart3 } from 'lucide-react';
 import './AdminDashboard.css';
 import AdminHeader from '../Header/AdminHeader';
+import companyService from '../../services/companyService';
+import psychologistService from '../../services/psychologistService';
+import bookingService from '../../services/bookingService';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -24,13 +27,28 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       
-      // TODO: Replace with actual API call to fetch dashboard stats
-      // For now, setting default values
+      // Fetch companies
+      const companiesRes = await companyService.getAllCompaniesAdmin();
+      const companies = Array.isArray(companiesRes) ? companiesRes : companiesRes.data || [];
+      
+      // Calculate total employees by summing company employee counts
+      const totalEmployees = companies.reduce((sum, company) => {
+        return sum + (company.employeeCount || 0);
+      }, 0);
+      
+      // Fetch psychologists
+      const psychologistsRes = await psychologistService.getAllPsychologists(1, 1000);
+      const psychologists = Array.isArray(psychologistsRes) ? psychologistsRes : psychologistsRes.data || [];
+      
+      // Fetch bookings to get total count
+      const bookingsRes = await bookingService.getAllBookings(1, 1);
+      const totalBookings = bookingsRes.total || 0;
+      
       setStats({
-        totalCompanies: 0,
-        totalEmployees: 0,
-        totalPsychologists: 0,
-        totalBookings: 0,
+        totalCompanies: companies.length,
+        totalEmployees: totalEmployees,
+        totalPsychologists: psychologists.length,
+        totalBookings: totalBookings,
         activeSubscriptions: 0,
         lastUpdated: new Date()
       });
@@ -127,39 +145,6 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* Recent Activities */}
-          <div className="dashboard-section">
-            <h2>Recent Activities</h2>
-            <div className="activity-list">
-              <div className="activity-item">
-                <div className="activity-icon blue">
-                  <Building2 size={16} />
-                </div>
-                <div className="activity-content">
-                  <p><strong>New company registered:</strong> Tech Solutions Inc</p>
-                  <span className="activity-time">2 hours ago</span>
-                </div>
-              </div>
-              <div className="activity-item">
-                <div className="activity-icon green">
-                  <Calendar size={16} />
-                </div>
-                <div className="activity-content">
-                  <p><strong>Booking completed:</strong> Employee session with Dr. Smith</p>
-                  <span className="activity-time">4 hours ago</span>
-                </div>
-              </div>
-              <div className="activity-item">
-                <div className="activity-icon purple">
-                  <Brain size={16} />
-                </div>
-                <div className="activity-content">
-                  <p><strong>New psychologist added:</strong> Dr. Sarah Johnson</p>
-                  <span className="activity-time">1 day ago</span>
-                </div>
-              </div>
-            </div>
-          </div>
       </div>
     </div>
   );
